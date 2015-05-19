@@ -68,8 +68,7 @@ for ni = 1:ntimes
 	uj1 = A\(rhs);
 
 	% Calculate error
-    errg = errorfd(ngridx, ngridy, gridx, gridy, ni, uj1, ...
-    				errg, truevd);
+    errg = errorfd(ngridx, ngridy, gridx, gridy, ni, uj1, errg);
 end
 
 

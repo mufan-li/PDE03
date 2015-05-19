@@ -6,7 +6,8 @@ global Uno Uname;
 % global etaA etaB etaC nu mu R eee;
 
 % note only take/return 1d vectors
-o = ones(max(size(x),size(y))); z = zeros(max(size(x),size(y)));
+o = ones(max(size(x),size(y)));
+z = zeros(max(size(x),size(y)));
 
 % UnoVec = [-1:7,10:13,30:31];
 

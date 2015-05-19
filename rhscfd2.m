@@ -23,16 +23,17 @@ for i = 1:mx
 end
 
 % need to find rhs
-vfx = zeros(nx,1); vfx(1) = 1;
-vlx = zeros(nx,1); vlx(nx) = 1;
-vfy = zeros(ny,1); vfy(1) = 1;
-vly = zeros(ny,1); vly(ny) = 1;
+vfx = zeros(mx,1); vfx(1) = 1;
+vlx = zeros(mx,1); vlx(mx) = 1;
+vfy = zeros(my,1); vfy(1) = 1;
+vly = zeros(my,1); vly(my) = 1;
 
 % vectors including corners, size (nx+1) and (ny+1)
-ux0 = DirechletBC(gridx,gridy(1));
-uxn = DirechletBC(gridx,gridy(ny+1));
-u0y = DirechletBC(gridx(1),gridy);
-uny = DirechletBC(gridx(nx+1),gridy);
+% converted to column vectors - consider fixing in DirechletBC()
+ux0 = DirechletBC(gridx,gridy(1))';
+uxn = DirechletBC(gridx,gridy(ny+1))';
+u0y = DirechletBC(gridx(1),gridy)';
+uny = DirechletBC(gridx(nx+1),gridy)';
 
 % corner units in the y direction size (ny-1)
 % used to remove the extra corners in cross derivatives
