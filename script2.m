@@ -10,9 +10,11 @@ ntimes = 5;
 nodex = 2.^(2:ntimes+1);
 nodey = nodex;
 
-% UnoList = 0:2;
-PDEnoList = 0:4;
-UnoList=0;
+% UnoList = [-1:8]; % basic debugging
+PDEnoList = 0:4; % basic
+UnoList = [10:13,30:31]; % complex functions
+
+% UnoList=0;
 % PDEnoList=4;
 
 for PDEno = PDEnoList

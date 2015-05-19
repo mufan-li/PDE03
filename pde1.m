@@ -13,7 +13,7 @@ o = ones(max(size(x),size(y))); z = zeros(max(size(x),size(y)));
 % watch out!!! (default)
 coefuxxx = 0; coefuxxxx = 0; rhsd = 0;
 
-% PDEnoVec = [0:4];
+% PDEnoList = [0:4];
 
 switch PDEno
 case{4}
