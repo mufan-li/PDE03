@@ -72,10 +72,16 @@ coefuxy   = z;
 %if x > 0.5, coefu = -2;, end;
 end
 
-[true1, true2, true3, true4, true5, t6] = truevd(x, t);
+[t1,t2,t3,t4,t5,t6] = truevd(x, y);
 
 if nargout < 5, coefuxxx = 0; coefuxxxx = 0; end
-rhs = coefut.*t6 - (coefu.*true1 + coefux.*true2 + coefuxx.*true3 ...
-    + coefuxxx.*true4 + coefuxxxx.*true5);
+rhs = (coefu.*t1 + coefux.*t2 + coefuxx.*t3 ...
+    + coefuy.*t4 + coefuyy.*t5 + coefuxy.*t6);
 % derivative of p*u'' + q*u' + r*u for p, q, r constant
-rhsd = coefu.*true2 + coefux.*true3 + coefuxx.*true4;
+% rhsd = coefu.*true2 + coefux.*true3 + coefuxx.*true4;
+
+
+
+
+
+
