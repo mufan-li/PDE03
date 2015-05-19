@@ -15,10 +15,12 @@
 % Functions need changes %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% rhscfd2
-% cfd2
+% rhscfd2 % added rhs for uniform grid only
+% cfd2 % changed to 2D for uniform grid only
 % errorfd
-% pde1
+% pde1 % changed to 2D BVP problems
+% truevd % changed to x,y coordinates only
+% DirechletBC % directed to truevd
 
 BC = 'DirechletBC';
 Dim = 2;
@@ -62,7 +64,7 @@ for ni = 1:ntimes
     %%%%%%%%%%%%%%%%%%%%%%%
 
 	[rhs, coefs] = rhscfd2(nx, ny, gridx, gridy);
-    [A, A2, A1, A0] = cfd2(nx, ny, gridx, gridy, coefs);
+    A = cfd2(nx, ny, gridx, gridy, coefs);
 	uj1 = A\(rhs);
 
 	% Calculate error
