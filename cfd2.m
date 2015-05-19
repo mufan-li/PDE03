@@ -14,6 +14,8 @@ global BC;
 m = (nx-1) * (ny-1);
 Ix = speye(nx-1);
 Iy = speye(ny-1);
+hx = gridx(2) - gridx(1);
+hy = gridy(2) - gridy(1);
 
 % need to adjust these matrices for non-uniform grids
 A2x = sptrid(1, -2, 1, nx-1);

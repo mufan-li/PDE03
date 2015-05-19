@@ -17,7 +17,7 @@ coefuxxx = 0; coefuxxxx = 0; rhsd = 0;
 
 switch PDEno
 case{4}
-	PDEname = 'Uxy + Uxx + Uyy = 0';  
+	PDEname = 'Uxy + Uxx + Uyy = g';  
 	coefu     = z; % x^(3/2);
 	coefux    = z; % sin(x) + 1;
 	coefuxx   = o; %exp(x/2);
@@ -26,7 +26,7 @@ case{4}
 	coefuxy   = o;
 
 case{3}
-	PDEname = 'Uy + Uxx + Uyy = 0';  
+	PDEname = 'Uy + Uxx + Uyy = g';
 	coefu     = z; % x^(3/2);
 	coefux    = z; % sin(x) + 1;
 	coefuxx   = o; %exp(x/2);
@@ -35,7 +35,7 @@ case{3}
 	coefuxy   = z;
 
 case{2}
-	PDEname = 'Ux + Uxx + Uyy = 0';  
+	PDEname = 'Ux + Uxx + Uyy = g';  
 	coefu     = z; % x^(3/2);
 	coefux    = o; % sin(x) + 1;
 	coefuxx   = o; %exp(x/2);
@@ -44,7 +44,7 @@ case{2}
 	coefuxy   = z;
 
 case{1}
-	PDEname = 'U + Uxx + Uyy = 0';  
+	PDEname = 'U + Uxx + Uyy = g';  
 	coefu     = o; % x^(3/2);
 	coefux    = z; % sin(x) + 1;
 	coefuxx   = o; %exp(x/2);
@@ -53,7 +53,7 @@ case{1}
 	coefuxy   = z;
 
 case{0}
-	PDEname = 'Uxx + Uyy = 0';  
+	PDEname = 'Uxx + Uyy = g';  
 	coefu     = z; % x^(3/2);
 	coefux    = z; % sin(x) + 1;
 	coefuxx   = o; %exp(x/2);
@@ -62,7 +62,7 @@ case{0}
 	coefuxy   = z;
 
 otherwise
-PDEname = 'Uxx + Uyy = 0';  
+PDEname = 'Uxx + Uyy = g';  
 coefu     = z; % x^(3/2);
 coefux    = z; % sin(x) + 1;
 coefuxx   = o; %exp(x/2);

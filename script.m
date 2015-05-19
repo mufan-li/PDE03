@@ -1,5 +1,8 @@
 % New Script file
 
+% consider changing script.m and script2.m to functions
+% to including helper functions within the same file
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variables init outside of script.m %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,23 +73,4 @@ for ni = 1:ntimes
 	% Calculate error
     errg = errorfd(ngridx, ngridy, gridx, gridy, ni, uj1, errg);
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
