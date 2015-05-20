@@ -3,18 +3,18 @@
 % initialize global vars
 global Uno Uname BCno PDEno PDEname;
 
-Uno = 0;
+Uno = 6;
 BCno = 0;
 PDEno = 0;
 ntimes = 5;
 nodex = 2.^(2:ntimes+1);
 nodey = nodex;
 
-% UnoList = [-1:8]; % basic debugging
-PDEnoList = 0:4; % basic
-UnoList = [10:13,30:31]; % complex functions
-
-% UnoList=0;
+UnoList = [0:8]; % basic debugging
+% PDEnoList = [0:5]; % basic
+% UnoList = [10:18,30:31]; % complex functions
+PDEnoList = [10:18]; % complex PDEs
+% UnoList=30:31;
 % PDEnoList=4;
 
 for PDEno = PDEnoList
@@ -22,6 +22,10 @@ for PDEno = PDEnoList
 		script;
 
 		disp(strcat([PDEname,', u = ',Uname]));
+		if (max(abs(errg))<1e-10)
+			disp('Solution Exact.');
+		end
+		
 		disp(errg);
 		errgr = errg(1:ntimes-1) ./ errg(2:ntimes);
 		disp(errgr);

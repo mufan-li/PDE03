@@ -9,17 +9,18 @@ global Uno Uname;
 o = ones(max(size(x),size(y)));
 z = zeros(max(size(x),size(y)));
 
-% UnoList = [-1:8,10:13,30:31];
+% UnoList = [-1:8,10:18,30:31];
 
 switch Uno
     case {31}
-        Uname = 'sin(x.*y/1e-1)';
-        t1 = sin(x.*y*10);
-        t2 = 10*y.*cos(x.*y*10);
-        t3 = -1e2*y.^2.*sin(x.*y*10);
-        t4 = 10*x.*cos(x.*y*10);
-        t5 = -1e2*x.^2.*sin(x.*y*10);
-        t6 = -1e2*x.*y.*sin(x.*y*10);
+        Uname = 'sin(x.*y*c)';
+        c = 4*pi;
+        t1 = sin(x.*y*c);
+        t2 = c*y.*cos(x.*y*c);
+        t3 = -c^2*y.^2.*sin(x.*y*c);
+        t4 = c*x.*cos(x.*y*c);
+        t5 = -c^2*x.^2.*sin(x.*y*c);
+        t6 = -c^2*x.*y.*sin(x.*y*c) + c*cos(x.*y*c);
     
     case {30}
         Uname = 'exp(x.*y)';
@@ -28,8 +29,53 @@ switch Uno
         t3 = y.^2.*exp(x.*y);
         t4 = x.*exp(x.*y);
         t5 = x.^2.*exp(x.*y);
-        t6 = x.*y.*exp(x.*y);
-    
+        t6 = x.*y.*exp(x.*y) + exp(x.*y);
+
+    case {18}
+        Uname = 'x.^3 .* y.^4';
+        t1 = x.^3 .* y.^4;
+        t2 = 3*x.^2.*y.^4;
+        t3 = 6*x.*y.^4;
+        t4 = 4*x.^3.*y.^3;
+        t5 = 12*x.^3.*y.^2;
+        t6 = 12*x.^2.*y.^3;
+
+    case {17}
+        Uname = 'x.^4 .* y.^3';
+        t1 = x.^4 .* y.^3;
+        t2 = 4*x.^3.*y.^3;
+        t3 = 12*x.^2.*y.^3;
+        t4 = 3*x.^4.*y.^2;
+        t5 = 6*x.^4.*y;
+        t6 = 12*x.^3.*y.^2;
+
+    case {16}
+        Uname = 'x.^3 .* y.^3';
+        t1 = x.^3 .* y.^3;
+        t2 = 3*x.^2.*y.^3;
+        t3 = 6*x.*y.^3;
+        t4 = 3*x.^3.*y.^2;
+        t5 = 6*x.^3.*y;
+        t6 = 9*x.^2.*y.^2;
+
+    case {15}
+        Uname = 'x.^2 .* y.^3';
+        t1 = x.^2 .* y.^3;
+        t2 = 2*x.*y.^3;
+        t3 = 2*y.^3;
+        t4 = 3*x.^2.*y.^2;
+        t5 = 6*x.^2.*y;
+        t6 = 6*x.*y.^2;
+
+    case {14}
+        Uname = 'x.^3 .* y.^2';
+        t1 = x.^3 .* y.^2;
+        t2 = 3*x.^2.*y.^2;
+        t3 = 6*x.*y.^2;
+        t4 = 2*x.^3.*y;
+        t5 = 2*x.^3;
+        t6 = 6*x.^2.*y;
+
     case {13}
         Uname = 'x.^2 .* y.^2';
         t1 = x.^2 .* y.^2;
