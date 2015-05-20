@@ -14,21 +14,33 @@ global BC;
 m = (nx-1) * (ny-1);
 Ix = speye(nx-1);
 Iy = speye(ny-1);
-hx = gridx(2) - gridx(1);
-hy = gridy(2) - gridy(1);
+
+% for non-uniform grids
+hx = gridx(2:nx+1) - gridx(1:nx);
+hx0 = hx(1:nx-1)'; hx1 = hx(2:nx)';
+hy = gridy(2:ny+1) - gridy(1:ny);
+hy0 = hy(1:ny-1)'; hy1 = hy(2:ny)';
 
 % need to adjust these matrices for non-uniform grids
-A2x = sptrid(1, -2, 1, nx-1);
-A1x = sptrid(-1, 0, 1, nx-1);
-A2y = sptrid(1, -2, 1, ny-1);
-A1y = sptrid(-1, 0, 1, ny-1);
+% A2x = sptrid(1, -2, 1, nx-1);
+A2x = spdiags([2./hx0./(hx0+hx1),-2./hx0./hx1,2./hx1./(hx0+hx1)],...
+        [-1 0 1],nx-1,nx-1);
+% A1x = sptrid(-1, 0, 1, nx-1);
+A1x = spdiags([-hx1./hx0./(hx0+hx1),(hx1-hx0)./hx0./hx1,...
+        hx0./hx1./(hx0+hx1)],[-1 0 1],nx-1,nx-1);
+% A2y = sptrid(1, -2, 1, ny-1);
+A2y = spdiags([2./hy0./(hy0+hy1),-2./hy0./hy1,2./hy1./(hy0+hy1)],...
+        [-1 0 1],ny-1,ny-1);
+% A1y = sptrid(-1, 0, 1, ny-1);
+A1y = spdiags([-hy1./hy0./(hy0+hy1),(hy1-hy0)./hy0./hy1,...
+        hx0./hy1./(hy0+hy1)],[-1 0 1],ny-1,ny-1);
 
 A = spdiag(coefs(:,1),m) * kron(Ix,Iy) + ... %u
-    spdiag(coefs(:,2),m) * kron(A1x,Iy) ./ (2*hx) + ... %ux
-    spdiag(coefs(:,3),m) * kron(A2x,Iy) ./ (hx^2) + ... %uxx
-    spdiag(coefs(:,4),m) * kron(Ix,A1y) ./ (2*hy) + ... %uy
-    spdiag(coefs(:,5),m) * kron(Ix,A2y) ./ (hy^2) + ... %uyy
-    spdiag(coefs(:,6),m) * kron(A1x,A1y) ./ (4*hx*hy) ; %uxy
+    spdiag(coefs(:,2),m) * kron(A1x,Iy) + ... %ux
+    spdiag(coefs(:,3),m) * kron(A2x,Iy) + ... %uxx
+    spdiag(coefs(:,4),m) * kron(Ix,A1y) + ... %uy
+    spdiag(coefs(:,5),m) * kron(Ix,A2y) + ... %uyy
+    spdiag(coefs(:,6),m) * kron(A1x,A1y) ; %uxy
 
 % A = spdiag(coefs(:, 3))*A + spdiag(coefs(:, 2))*A1 + spdiag(coefs(:, 1))*E;
 
