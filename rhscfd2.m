@@ -7,8 +7,18 @@ global BC BCno Unif Dim UxStep Uno;
 mx = nx-1; my = ny-1;
 numeq = mx * my;
 m = numeq;
-hx = gridx(2) - gridx(1);
-hy = gridy(2) - gridy(1);
+
+% note - need the beginning and end of the grid
+hx = gridx(2:nx+1) - gridx(1:nx);
+hx0 = hx(1:nx-1)'; hx1 = hx(2:nx)';
+hx00 = hx(1); hx0n = hx(nx-1);
+hx10 = hx(2); hx1n = hx(nx);
+
+hy = gridy(2:ny+1) - gridy(1:ny);
+hy0 = hy(1:ny-1)'; hy1 = hy(2:ny)';
+hy00 = hy(1); hy0n = hy(ny-1);
+hy10 = hy(2); hy1n = hy(ny);
+
 rhs = zeros(m,1);
 coefs = zeros(m,6); % including y and cross derivatives
 
@@ -35,26 +45,60 @@ uxn = DirechletBC(gridx,gridy(ny+1))';
 u0y = DirechletBC(gridx(1),gridy)';
 uny = DirechletBC(gridx(nx+1),gridy)';
 
+%%%%%%%%%%%%%%%%%%%%
+% cross derivative %
+%%%%%%%%%%%%%%%%%%%%
+
+% first find the diagonal vectors
+lx = -hx1./hx0./(hx0+hx1);
+dx = (hx1-hx0)./hx0./hx1;
+vx = hx0./hx1./(hx0+hx1);
+
+ly = -hy1./hy0./(hy0+hy1);
+dy = (hy1-hy0)./hy0./hy1;
+vy = hy0./hy1./(hy0+hy1);
+
+% then find the rhs for each border
+v0y = lx(1) * (ly.*u0y(1:ny-1) + dy.*u0y(2:ny) + vy.*u0y(3:ny+1)); 
+vny = vx(ny-1) * (ly.*uny(1:ny-1) + dy.*uny(2:ny) + vy.*uny(3:ny+1));
+vx0 = ly(1) * (lx.*ux0(1:nx-1) + dx.*ux0(2:nx) + vx.*ux0(3:nx+1));
+vxn = vy(ny-1) * (lx.*uxn(1:nx-1) + dx.*uxn(2:nx) + vx.*uxn(3:nx+1));
+
 % corner units in the y direction size (ny-1)
 % used to remove the extra corners in cross derivatives
-uc0y = [u0y(1); zeros(ny-3,1); -u0y(ny+1)];
-ucny = [-uny(1); zeros(ny-3,1); uny(ny+1)];
+uc0y = [u0y(1) *ly(1); zeros(ny-3,1); u0y(ny+1) *vy(ny-1)] *lx(1);
+ucny = [uny(1) *ly(1); zeros(ny-3,1); uny(ny+1) *vy(ny-1)] *vx(nx-1);
 
-% need to add the other coefficients
 % note - ux0 and uxn are terms used for uyy
-rhs_add2x = - (kron(vfx,u0y(2:ny)) + kron(vlx,uny(2:ny))) ./ hx^2;
-rhs_add2y = - (kron(ux0(2:nx),vfy) + kron(uxn(2:nx),vly)) ./ hy^2;
+rhs_add2x = - (kron(vfx,u0y(2:ny)*2/hx00/(hx00+hx10)) ...
+            + kron(vlx,uny(2:ny)*2/hx1n/(hx0n+hx1n)));
 
-rhs_addxy = - (kron(vfx,u0y(1:ny-1)-u0y(3:ny+1)-uc0y) + ...
-    kron(vlx,-uny(1:ny-1)+uny(3:ny+1)-ucny) + ...
-    kron(ux0(1:nx-1)-ux0(3:nx+1),vfy) + ...
-    kron(-uxn(1:nx-1)+uxn(3:nx+1),vly)) ./ (4*hx*hy);
+rhs_add2y = - (kron(ux0(2:nx)*2/hy00/(hy00+hy10),vfy) ...
+            + kron(uxn(2:nx)*2/hy1n/(hy0n+hy1n),vly));
 
-rhs_add1x = - (kron(vfx,-u0y(2:ny)) + kron(vlx,uny(2:ny))) ./ (2*hx);
-rhs_add1y = - (kron(-ux0(2:nx),vfy) + kron(uxn(2:nx),vly)) ./ (2*hy);
+rhs_add1x = - (kron(vfx,-u0y(2:ny)*hx10/hx00/(hx00+hx10)) ...
+            + kron(vlx,uny(2:ny)*hx00/hx10/(hx00+hx10)));
+
+rhs_add1y = - (kron(-ux0(2:nx)*hy10/hy00/(hy00+hy10),vfy) ...
+            + kron(uxn(2:nx)*hy00/hy10/(hy00+hy10),vly));
+
+rhs_addxy = - ( kron(vfx,v0y - uc0y) + kron(vlx,vny - ucny) + ...
+                kron(vx0,vfy) + kron(vxn,vly) );
 
 rhs = rhs + coefs(:,2) .* rhs_add1x + coefs(:,3) .* rhs_add2x ...
     + coefs(:,4) .* rhs_add1y + coefs(:,5) .* rhs_add2y ...
     + coefs(:,6) .* rhs_addxy;
 
 end
+
+
+
+
+
+
+
+
+
+
+
+

@@ -16,12 +16,13 @@ Ix = speye(nx-1);
 Iy = speye(ny-1);
 
 % for non-uniform grids
+% converted to column vectors
 hx = gridx(2:nx+1) - gridx(1:nx);
 hx0 = hx(1:nx-1)'; hx1 = hx(2:nx)';
 hy = gridy(2:ny+1) - gridy(1:ny);
 hy0 = hy(1:ny-1)'; hy1 = hy(2:ny)';
 
-% need to adjust these matrices for non-uniform grids
+% adjusted matrices for non-uniform grids
 % A2x = sptrid(1, -2, 1, nx-1);
 A2x = spdiags([2./hx0./(hx0+hx1),-2./hx0./hx1,2./hx1./(hx0+hx1)],...
         [-1 0 1],nx-1,nx-1);
