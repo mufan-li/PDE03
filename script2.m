@@ -10,12 +10,12 @@ ntimes = 5;
 nodex = 2.^(2:ntimes+1);
 nodey = nodex;
 
-UnoList = [0:8]; % basic debugging
+% UnoList = [0:8]; % basic debugging
 % PDEnoList = [0:5]; % basic
-% UnoList = [10:18,30:31]; % complex functions
-% PDEnoList = [10:18]; % complex PDEs
-% UnoList=1;
-PDEnoList=4;
+UnoList = [10:18,30:31]; % complex functions
+PDEnoList = [10:18]; % complex PDEs
+% UnoList=0;
+% PDEnoList=2;
 
 for PDEno = PDEnoList
 	for Uno = UnoList

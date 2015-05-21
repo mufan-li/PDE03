@@ -1,9 +1,9 @@
 % non-uniform grid for price
-function [gridx] = nugrid(gridxu,ax,bx)
-    global GridC etaB K Smax;
+function [gridx] = nugrid(gridxu,ax,bx,Gridno)
+    global etaB K Smax;
     m = length(gridxu)-1;
     
-    switch GridC
+    switch Gridno
         case {21}
             %Black Scholes Grid 2
             % a = 4; % a=4 sets grid 21 ~ grid 20
@@ -63,6 +63,7 @@ function [gridx] = nugrid(gridxu,ax,bx)
             
         case {2}
             % gridx = ((1+etaB).^gridxu - 1)/etaB; 
+            etaB = 2;
             gridx = ((1+etaB).^gridxu - 1)*2/((1+etaB)^bx - 1);
             
         case {1}

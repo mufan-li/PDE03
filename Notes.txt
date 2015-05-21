@@ -1,0 +1,66 @@
+Notes
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Thursday May 21
+
+Fixed bug for non-uniform grid at u=1, however not complete
+ - still error for Ux and Uy terms
+ - error found in rhs terms
+
+Only change in exactness
+Uxx+Uyy - x^3
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Wednesday May 20
+Goals - Test variable coefficients, derive non-unif disc.
+
+Ux, Uy convergence at order 4 instead of 16
+Double check convergence for u(x,y)=sin(x*y)
+
+Uniform grid with non-uniform code produce correct results
+Debugging non-uniform grid for u=1 case
+	error in forming the matrix using spdiags
+	- compare code with previous cfd2.m
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday May 19
+Goals - Test basic cases for uniform grid
+
+Uxx+Uyy - x^4, x^4*y^3
+Ux - x^3, x^3*y^2
+Uy - y^3, x^2*y^3
+Uxy - x^4, x^3*y^2
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Higher Dimensions
+
+Ikonen 2004
+Ikonen 2009 - 2D + Stochastic Vol
+Heston Method
+
+2D PDE
+ - including cross derivatives
+ - variable coef
+ - debug carefully
+ - Dirichlet BC
+
+Kroniger/Tensor Product of Matrices
+ - right hand side of equation
+ - sometimes 1 or 2 (3 for cross derivatives) terms
+
+u = 1, x, x+y, x^2
+pde = laplace, helmholtz, more complex
+convergence
+
+European Rainbow Options - Analytical solutions
+
+Batch mode output
+ - matlab script output
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

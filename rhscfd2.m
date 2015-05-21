@@ -60,7 +60,7 @@ vy = hy0./hy1./(hy0+hy1);
 
 % then find the rhs for each border
 v0y = lx(1) * (ly.*u0y(1:ny-1) + dy.*u0y(2:ny) + vy.*u0y(3:ny+1)); 
-vny = vx(ny-1) * (ly.*uny(1:ny-1) + dy.*uny(2:ny) + vy.*uny(3:ny+1));
+vny = vx(nx-1) * (ly.*uny(1:ny-1) + dy.*uny(2:ny) + vy.*uny(3:ny+1));
 vx0 = ly(1) * (lx.*ux0(1:nx-1) + dx.*ux0(2:nx) + vx.*ux0(3:nx+1));
 vxn = vy(ny-1) * (lx.*uxn(1:nx-1) + dx.*uxn(2:nx) + vx.*uxn(3:nx+1));
 
@@ -77,14 +77,15 @@ rhs_add2y = - (kron(ux0(2:nx)*2/hy00/(hy00+hy10),vfy) ...
             + kron(uxn(2:nx)*2/hy1n/(hy0n+hy1n),vly));
 
 rhs_add1x = - (kron(vfx,-u0y(2:ny)*hx10/hx00/(hx00+hx10)) ...
-            + kron(vlx,uny(2:ny)*hx00/hx10/(hx00+hx10)));
+            + kron(vlx,uny(2:ny)*hx0n/hx1n/(hx0n+hx1n)));
 
 rhs_add1y = - (kron(-ux0(2:nx)*hy10/hy00/(hy00+hy10),vfy) ...
-            + kron(uxn(2:nx)*hy00/hy10/(hy00+hy10),vly));
+            + kron(uxn(2:nx)*hy0n/hy1n/(hy0n+hy1n),vly));
 
 rhs_addxy = - ( kron(vfx,v0y - uc0y) + kron(vlx,vny - ucny) + ...
                 kron(vx0,vfy) + kron(vxn,vly) );
 
+% add the entire rhs
 rhs = rhs + coefs(:,2) .* rhs_add1x + coefs(:,3) .* rhs_add2x ...
     + coefs(:,4) .* rhs_add1y + coefs(:,5) .* rhs_add2y ...
     + coefs(:,6) .* rhs_addxy;
