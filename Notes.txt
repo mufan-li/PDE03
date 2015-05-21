@@ -12,7 +12,13 @@ Only change in exactness
 Uxx+Uyy - x^3
 
 Attempt to add IVP
- - debugged but observing low convergence rate
+ - exact cases are now correct
+ - but observing low convergence rate
+ 	- error in truevd2()
+
+Fixed bug
+
+Ut term stops being exact at t^3
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

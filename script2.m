@@ -12,9 +12,11 @@ nodey = nodex;
 nodet = nodex;
 
 UnoList = [0:8]; % basic debugging
-PDEnoList = [0:5]; % basic
+% PDEnoList = [0:5]; % basic
 % UnoList = [10:18,30:31]; % complex functions
 % PDEnoList = [10:18]; % complex PDEs
+% UnoList = [40:43,50]; % IVP specific functions
+PDEnoList = [20:22]; % time dependent coef PDEs
 % UnoList=1;
 % PDEnoList=0;
 
@@ -25,11 +27,12 @@ for PDEno = PDEnoList
 		disp(strcat([PDEname,', u = ',Uname]));
 		if (max(abs(errg))<1e-10)
 			disp('Solution Exact.');
+			disp(' ');
+		else
+			disp(errg);
+			errgr = errg(1:ntimes-1) ./ errg(2:ntimes);
+			disp(errgr);
 		end
-		
-		disp(errg);
-		errgr = errg(1:ntimes-1) ./ errg(2:ntimes);
-		disp(errgr);
 	end
 end
 
