@@ -6,16 +6,17 @@ global Uno Uname BCno PDEno PDEname;
 Uno = 6;
 BCno = 0;
 PDEno = 0;
-ntimes = 5;
+ntimes = 3;
 nodex = 2.^(2:ntimes+1);
 nodey = nodex;
+nodet = nodex;
 
-% UnoList = [0:8]; % basic debugging
-% PDEnoList = [0:5]; % basic
-UnoList = [10:18,30:31]; % complex functions
-PDEnoList = [10:18]; % complex PDEs
-% UnoList=0;
-% PDEnoList=2;
+UnoList = [0:8]; % basic debugging
+PDEnoList = [0:5]; % basic
+% UnoList = [10:18,30:31]; % complex functions
+% PDEnoList = [10:18]; % complex PDEs
+% UnoList=1;
+% PDEnoList=0;
 
 for PDEno = PDEnoList
 	for Uno = UnoList

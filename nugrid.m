@@ -67,7 +67,8 @@ function [gridx] = nugrid(gridxu,ax,bx,Gridno)
             gridx = ((1+etaB).^gridxu - 1)*2/((1+etaB)^bx - 1);
             
         case {1}
-            gridx = (exp(gridxu)-1) / (exp(bx)-1) * bx; % Non-Uniform grids
+            gridx = (exp(gridxu)-1) / (exp(bx)-1) * bx; 
+            % Non-Uniform grids
   
         otherwise
             gridx = gridxu;

@@ -11,6 +11,9 @@ Fixed bug for non-uniform grid at u=1, however not complete
 Only change in exactness
 Uxx+Uyy - x^3
 
+Attempt to add IVP
+ - debugged but observing low convergence rate
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Wednesday May 20

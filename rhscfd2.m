@@ -1,5 +1,5 @@
 % function [rhs, coefs] = rhscfd2(n, gridx)
-function [rhs, coefs] = rhscfd2(nx, ny, gridx, gridy)
+function [rhs, coefs] = rhscfd2(nx, ny, gridx, gridy, tj)
 
 % Evaluating Boundary Conditions
 global BC BCno Unif Dim UxStep Uno;
@@ -29,7 +29,7 @@ for i = 1:mx
     ind = (1:my)+(i-1)*my;
     [rhs(ind), coefs(ind,1), coefs(ind,2), coefs(ind,3), ...
         coefs(ind,4), coefs(ind,5), coefs(ind,6)] = ...
-        pde1(gridx(i+1), gridy(2:ny));
+        pde2(gridx(i+1), gridy(2:ny),tj);
 end
 
 % need to find rhs
@@ -39,11 +39,11 @@ vfy = zeros(my,1); vfy(1) = 1;
 vly = zeros(my,1); vly(my) = 1;
 
 % vectors including corners, size (nx+1) and (ny+1)
-% converted to column vectors - consider fixing in DirechletBC()
-ux0 = DirechletBC(gridx,gridy(1))';
-uxn = DirechletBC(gridx,gridy(ny+1))';
-u0y = DirechletBC(gridx(1),gridy)';
-uny = DirechletBC(gridx(nx+1),gridy)';
+% converted to column vectors
+ux0 = DirechletBC(gridx,gridy(1),tj);
+uxn = DirechletBC(gridx,gridy(ny+1),tj);
+u0y = DirechletBC(gridx(1),gridy,tj);
+uny = DirechletBC(gridx(nx+1),gridy,tj);
 
 %%%%%%%%%%%%%%%%%%%%
 % cross derivative %

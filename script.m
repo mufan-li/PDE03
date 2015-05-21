@@ -13,24 +13,28 @@
 % ntimes
 % nodex
 % nodey
+% nodet
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 % Functions need changes %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% rhscfd2 % added rhs for uniform grid only
-% cfd2 % changed to 2D for uniform grid only
-% errorfd
-% pde1 % changed to 2D BVP problems
-% truevd % changed to x,y coordinates only
-% DirechletBC % directed to truevd
+% need to add loop and modify sequence
+
+% DirechletBC % changed to calls truevd2(), need to loop
+% rhscfd2 % calls BC() and pde2() with tj
+% errorfd2 % new - calls truevd2()
+% pde2 % new
+% truevd2 % new
 
 BC = 'DirechletBC';
-Dim = 2;
+% Dim = 2;
 Uname = '';
 % ax = Smin; bx = Smax;
 ax = 0; bx = 1;
 ay = 0; by = 1; % y dim
+at = 0; bt = 1e-2; % t dim (IVP)
+theta = 1/2; % Crank-Nicolson
 errg = zeros(1, ntimes);
 
 for ni = 1:ntimes
@@ -46,7 +50,7 @@ for ni = 1:ntimes
     numeqx = neqx;
     hx = (bx-ax)/nx;
     gridx = ax + hx*[0:nx]; gridxu = gridx;
-    gridx = nugrid(gridxu,ax,bx,1); %non-uniform spacing
+    % gridx = nugrid(gridxu,ax,bx,1); %non-uniform spacing
 
     ny = nodey(ni); % for specific node counts
     ngridy = ny+1; %ninty(nn) = ny;
@@ -54,23 +58,46 @@ for ni = 1:ntimes
     numeqy = neqy;	% n-1 for D, n for DN and periodic, n+1 for N
     hy = (by-ay)/ny;
     gridy = ay + hy*[0:ny]; gridyu = gridy;
-    gridy = nugrid(gridyu,ay,by,1); %non-uniform spacing
+    % gridy = nugrid(gridyu,ay,by,1); %non-uniform spacing
 
     %%%%%%%%%%%%
     % time dim %
     %%%%%%%%%%%%
 
-    % to be added
+    nt = nodet(ni);
+    ngridt = nt + 1;
+    ht = (bt-at)/nt;
+    gridt = at + ht*[0:nt];
+    % note - adaptive grid changed inside loop
+
+    uj0 = DirechletBC(gridx(2:nx),gridy(2:ny),at); % IC
 
     %%%%%%%%%%%%%%%%%%%%%%%
     % Solve linear system %
     %%%%%%%%%%%%%%%%%%%%%%%
 
-	[rhs, coefs] = rhscfd2(nx, ny, gridx, gridy);
-    A = cfd2(nx, ny, gridx, gridy, coefs);
-	uj1 = A\(rhs);
+    for j = 1:nt
+        tj = gridt(j);
+        tj1 = gridt(j+1);
+        htj = tj1 - tj; % adaptive time step
 
-	% Calculate error
-    errg = errorfd(ngridx, ngridy, gridx, gridy, ni, uj1, errg);
+        % assume time dependent coefficients
+        [rhs0, coefs0] = rhscfd2(nx, ny, gridx, gridy, tj);
+        [rhs1, coefs1] = rhscfd2(nx, ny, gridx, gridy, tj1);
+
+        A0 = cfd2(nx, ny, gridx, gridy, coefs0);
+        A1 = cfd2(nx, ny, gridx, gridy, coefs1);
+        Im = speye(size(A0));
+
+        Aim = Im - theta*htj*A1;
+        Aex = Im + (1-theta)*htj*A0;
+        rhs = htj*(theta*rhs1 + (1-theta)*rhs0);
+
+        uj1 = Aim\(Aex*uj0-rhs); % note rhs here is not on the rhs
+        uj0 = uj1; % move to next step
+    end
+	
+	% Calculate error - at the final step
+    errg = errorfd2(ngridx, ngridy, gridx, gridy, ni, uj1, errg, bt);
 end
 
