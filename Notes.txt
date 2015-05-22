@@ -2,6 +2,17 @@ Notes
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Friday May 22
+
+Fixed Ut term being time-dependent
+ - code not supposed to handle coefficients on Ut
+ - instead move coefficients to the other side
+
+Test more cases for time-dep coefs
+Frame code for BVPs
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Thursday May 21
 
 Fixed bug for non-uniform grid at u=1, however not complete
@@ -17,8 +28,9 @@ Attempt to add IVP
  	- error in truevd2()
 
 Fixed bug
+ - Ut term stops being exact at t^3
 
-Ut term stops being exact at t^3
+ Solution non-exact for time-dependent coefficients
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

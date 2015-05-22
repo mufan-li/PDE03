@@ -18,7 +18,7 @@ UnoList = [0:8]; % basic debugging
 % UnoList = [40:43,50]; % IVP specific functions
 PDEnoList = [20:22]; % time dependent coef PDEs
 % UnoList=1;
-% PDEnoList=0;
+% PDEnoList=22;
 
 for PDEno = PDEnoList
 	for Uno = UnoList

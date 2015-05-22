@@ -34,21 +34,21 @@ case{21}
 	PDEname = 'Uxx + Uyy = t.^2 * Ut + g';  
 	coefu     = z; % x^(3/2);
 	coefux    = z; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefuxx   = t.^-2; %exp(x/2);
 	coefuy    = z;
-	coefuyy	  = o;
+	coefuyy	  = t.^-2;
 	coefuxy   = z;
-	coefut    = t.^2;
+	coefut    = o;
 
 case{20}
 	PDEname = 'Uxx + Uyy = t * Ut + g';  
 	coefu     = z; % x^(3/2);
 	coefux    = z; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefuxx   = t.^-1; %exp(x/2);
 	coefuy    = z;
-	coefuyy	  = o;
+	coefuyy	  = t.^-1;
 	coefuxy   = z;
-	coefut    = t;
+	coefut    = o;
 
 
 case{18}
@@ -217,7 +217,7 @@ end
 
 if nargout < 5, coefuxxx = 0; coefuxxxx = 0; end
 rhs = (coefu.*t1 + coefux.*t2 + coefuxx.*t3 ...
-    + coefuy.*t4 + coefuyy.*t5 + coefuxy.*t6 - coefut.*t7);
+    + coefuy.*t4 + coefuyy.*t5 + coefuxy.*t6 - t7);
 % derivative of p*u'' + q*u' + r*u for p, q, r constant
 % rhsd = coefu.*true2 + coefux.*true3 + coefuxx.*true4;
 

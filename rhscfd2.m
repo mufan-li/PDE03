@@ -20,7 +20,7 @@ hy00 = hy(1); hy0n = hy(ny-1);
 hy10 = hy(2); hy1n = hy(ny);
 
 rhs = zeros(m,1);
-coefs = zeros(m,6); % including y and cross derivatives
+coefs = zeros(m,7); % including y and cross derivatives
 
 % find coefs - note iterate through y-indices first
 % note - coefs are already in the order the diagonals
@@ -28,7 +28,7 @@ coefs = zeros(m,6); % including y and cross derivatives
 for i = 1:mx
     ind = (1:my)+(i-1)*my;
     [rhs(ind), coefs(ind,1), coefs(ind,2), coefs(ind,3), ...
-        coefs(ind,4), coefs(ind,5), coefs(ind,6)] = ...
+        coefs(ind,4), coefs(ind,5), coefs(ind,6), coefs(ind,7)] =...
         pde2(gridx(i+1), gridy(2:ny),tj);
 end
 

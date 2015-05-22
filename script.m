@@ -19,14 +19,6 @@
 % Functions need changes %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% need to add loop and modify sequence
-
-% DirechletBC % changed to calls truevd2(), need to loop
-% rhscfd2 % calls BC() and pde2() with tj
-% errorfd2 % new - calls truevd2()
-% pde2 % new
-% truevd2 % new
-
 BC = 'DirechletBC';
 % Dim = 2;
 Uname = '';
@@ -50,7 +42,7 @@ for ni = 1:ntimes
     numeqx = neqx;
     hx = (bx-ax)/nx;
     gridx = ax + hx*[0:nx]; gridxu = gridx;
-    % gridx = nugrid(gridxu,ax,bx,1); %non-uniform spacing
+    gridx = nugrid(gridxu,ax,bx,1); %non-uniform spacing
 
     ny = nodey(ni); % for specific node counts
     ngridy = ny+1; %ninty(nn) = ny;
@@ -58,7 +50,7 @@ for ni = 1:ntimes
     numeqy = neqy;	% n-1 for D, n for DN and periodic, n+1 for N
     hy = (by-ay)/ny;
     gridy = ay + hy*[0:ny]; gridyu = gridy;
-    % gridy = nugrid(gridyu,ay,by,1); %non-uniform spacing
+    gridy = nugrid(gridyu,ay,by,1); %non-uniform spacing
 
     %%%%%%%%%%%%
     % time dim %
