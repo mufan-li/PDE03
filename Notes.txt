@@ -9,7 +9,8 @@ Fixed Ut term being time-dependent
  - instead move coefficients to the other side
 
 Test more cases for time-dep coefs
-Frame code for BVPs
+Frame code for BVPs - Tests 
+ - or pull an earlier copy of the files
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

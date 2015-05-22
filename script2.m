@@ -16,7 +16,7 @@ UnoList = [0:8]; % basic debugging
 % UnoList = [10:18,30:31]; % complex functions
 % PDEnoList = [10:18]; % complex PDEs
 % UnoList = [40:43,50]; % IVP specific functions
-PDEnoList = [20:22]; % time dependent coef PDEs
+PDEnoList = [20:25]; % time dependent coef PDEs
 % UnoList=1;
 % PDEnoList=22;
 

@@ -16,9 +16,39 @@ z = zeros(s);
 % watch out!!! (default)
 coefuxxx = 0; coefuxxxx = 0; rhsd = 0;
 
-% PDEnoList = [0:5,10:18,20:22];
+% PDEnoList = [0:5,10:18,20:25];
 
 switch PDEno
+
+case{25}
+	PDEname = 't^2 * (Uxy + Uxx + Uyy) = Ut + g';  
+	coefu     = z; % x^(3/2);
+	coefux    = z; % sin(x) + 1;
+	coefuxx   = t.^2; %exp(x/2);
+	coefuy    = z;
+	coefuyy	  = t.^2;
+	coefuxy   = t.^2;
+	coefut    = o;
+
+case{24}
+	PDEname = 't^2 * (Uy + Uxx + Uyy) = Ut + g';  
+	coefu     = z; % x^(3/2);
+	coefux    = z; % sin(x) + 1;
+	coefuxx   = t.^2; %exp(x/2);
+	coefuy    = t.^2;
+	coefuyy	  = t.^2;
+	coefuxy   = z;
+	coefut    = o;
+
+case{23}
+	PDEname = 't^2 * (Ux + Uxx + Uyy) = Ut + g';  
+	coefu     = z; % x^(3/2);
+	coefux    = t.^2; % sin(x) + 1;
+	coefuxx   = t.^2; %exp(x/2);
+	coefuy    = z;
+	coefuyy	  = t.^2;
+	coefuxy   = z;
+	coefut    = o;
 
 case{22}
 	PDEname = 't.^2 * Uxx + t.^2 * Uyy = Ut + g';  
