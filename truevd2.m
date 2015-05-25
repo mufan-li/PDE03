@@ -23,7 +23,7 @@ case {50}
     t5 = x.^2 .* t.^4 .* exp(x .* y .* t.^2);
     t6 = t.^2 .* exp(x .* y .* t.^2) + ...
         x .* y .* t.^4 .* exp(x .* y .* t.^2);
-    t7 = 2 * x .* y .* t;
+    t7 = 2 * x .* y .* t .* exp(x .* y .* t.^2);
 
 case {43}
     Uname = 'x .* y .* t^3';
