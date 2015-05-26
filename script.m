@@ -23,9 +23,9 @@ BC = 'DirechletBC';
 % Dim = 2;
 Uname = '';
 % ax = Smin; bx = Smax;
-ax = 0.5; bx = 1;
-ay = 0.5; by = 1; % y dim
-at = 0.5; bt = 0.5+1e-2; % t dim (IVP)
+ax = Smin; bx = Smax;
+ay = Smin; by = Smax; % y dim
+at = 0; bt = T; % t dim (IVP)
 theta = 1/2; % Crank-Nicolson
 errg = zeros(1, ntimes);
 

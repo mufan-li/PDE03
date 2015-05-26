@@ -6,7 +6,7 @@ function [rhs, coefu, coefux, coefuxx, coefuy, ...
 			coefuyy, coefuxy, coefut] = pde2(x, y, t)
 
 global PDEno PDEname Uno Uname;
-% global T SigmaC Rf K Smin Smax;
+global T Sx Sy rho Rf K Smin Smax;
 % global etaA etaB etaC nu mu R eee;
 
 % note only take/return 1d vectors
@@ -19,12 +19,23 @@ coefuxxx = 0; coefuxxxx = 0; rhsd = 0;
 % PDEnoList = [0:5,10:18,20:25];
 
 switch PDEno
+case {100}
+	PDEname = 'European Rainbow Option';
+	% Ut = -rU + rxUx + ryUy + 1/2*sgx^2*x^2*Uxx + ...
+	%		1/2*sgy^2*y^2*Uyy + rho*sgx*sgy*xy*Uxy
+	coefu     = -Rf * o;
+	coefux    = Rf * x .* o;
+	coefuxx   = 1/2 * Sx^2 * x.^2;
+	coefuy    = Rf * y .* o;
+	coefuyy	  = 1/2 * Sy^2 * y.^2;
+	coefuxy   = rho * Sx * Sy * x .* y;
+	coefut    = o;
 
 case{25}
 	PDEname = 't^2 * (Uxy + Uxx + Uyy) = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = t.^2; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = t.^2;
 	coefuy    = z;
 	coefuyy	  = t.^2;
 	coefuxy   = t.^2;
@@ -32,9 +43,9 @@ case{25}
 
 case{24}
 	PDEname = 't^2 * (Uy + Uxx + Uyy) = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = t.^2; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = t.^2;
 	coefuy    = t.^2;
 	coefuyy	  = t.^2;
 	coefuxy   = z;
@@ -42,9 +53,9 @@ case{24}
 
 case{23}
 	PDEname = 't^2 * (Ux + Uxx + Uyy) = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = t.^2; % sin(x) + 1;
-	coefuxx   = t.^2; %exp(x/2);
+	coefu     = z;
+	coefux    = t.^2;
+	coefuxx   = t.^2;
 	coefuy    = z;
 	coefuyy	  = t.^2;
 	coefuxy   = z;
@@ -52,9 +63,9 @@ case{23}
 
 case{22}
 	PDEname = 't.^2 * Uxx + t.^2 * Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = t.^2; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = t.^2;
 	coefuy    = z;
 	coefuyy	  = t.^2;
 	coefuxy   = z;
@@ -62,9 +73,9 @@ case{22}
 
 case{21}
 	PDEname = 'Uxx + Uyy = t.^2 * Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = t.^-2; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = t.^-2;
 	coefuy    = z;
 	coefuyy	  = t.^-2;
 	coefuxy   = z;
@@ -72,9 +83,9 @@ case{21}
 
 case{20}
 	PDEname = 'Uxx + Uyy = t * Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = t.^-1; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = t.^-1;
 	coefuy    = z;
 	coefuyy	  = t.^-1;
 	coefuxy   = z;
@@ -83,9 +94,9 @@ case{20}
 
 case{18}
 	PDEname = 'x * y * U + Uxx + Uyy = Ut + g';  
-	coefu     = x.*y; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefu     = x.*y;
+	coefux    = z;
+	coefuxx   = o;
 	coefuy    = z;
 	coefuyy	  = o;
 	coefuxy   = z;
@@ -93,9 +104,9 @@ case{18}
 
 case{17}
 	PDEname = 'x * y * Uxy + Uxx + Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = o;
 	coefuy    = z;
 	coefuyy	  = o;
 	coefuxy   = x.*y;
@@ -103,9 +114,9 @@ case{17}
 
 case{16}
 	PDEname = 'y * Ux + x * Uy + Uxx + Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = y; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefu     = z;
+	coefux    = y;
+	coefuxx   = o;
 	coefuy    = x;
 	coefuyy	  = o;
 	coefuxy   = z;
@@ -113,9 +124,9 @@ case{16}
 
 case{15}
 	PDEname = 'x * Ux + y * Uy + Uxx + Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = x; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefu     = z;
+	coefux    = x;
+	coefuxx   = o;
 	coefuy    = y;
 	coefuyy	  = o;
 	coefuxy   = z;
@@ -123,9 +134,9 @@ case{15}
 
 case{14}
 	PDEname = 'x * y.^2 * Uxx + x.^2 * y * Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = x.*y.^2; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = x.*y.^2;
 	coefuy    = z;
 	coefuyy	  = x.^2.*y;
 	coefuxy   = z;
@@ -133,9 +144,9 @@ case{14}
 
 case{13}
 	PDEname = 'x^2 * y * Uxx + x * y^2 * Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = x.^2.*y; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = x.^2.*y;
 	coefuy    = z;
 	coefuyy	  = x.*y.^2;
 	coefuxy   = z;
@@ -143,9 +154,9 @@ case{13}
 
 case{12}
 	PDEname = 'x * y * Uxx + x * y * Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = x.*y; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = x.*y;
 	coefuy    = z;
 	coefuyy	  = x.*y;
 	coefuxy   = z;
@@ -153,9 +164,9 @@ case{12}
 
 case{11}
 	PDEname = 'y * Uxx + x * Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = y; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = y;
 	coefuy    = z;
 	coefuyy	  = x;
 	coefuxy   = z;
@@ -163,9 +174,9 @@ case{11}
 
 case{10}
 	PDEname = 'x * Uxx + y * Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = x; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = x;
 	coefuy    = z;
 	coefuyy	  = y;
 	coefuxy   = z;
@@ -173,9 +184,9 @@ case{10}
 
 case{5}
 	PDEname = 'U - Ux - Uy - Uxy + Uxx + Uyy = Ut + g';  
-	coefu     = o; % x^(3/2);
-	coefux    = -o; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefu     = o;
+	coefux    = -o;
+	coefuxx   = o;
 	coefuy    = -o;
 	coefuyy	  = o;
 	coefuxy   = -o;
@@ -183,9 +194,9 @@ case{5}
 
 case{4}
 	PDEname = 'Uxy + Uxx + Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = o;
 	coefuy    = z;
 	coefuyy	  = o;
 	coefuxy   = o;
@@ -193,9 +204,9 @@ case{4}
 
 case{3}
 	PDEname = 'Uy + Uxx + Uyy = Ut + g';
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = o;
 	coefuy    = -o;
 	coefuyy	  = o;
 	coefuxy   = z;
@@ -203,9 +214,9 @@ case{3}
 
 case{2}
 	PDEname = 'Ux + Uxx + Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = -o; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefu     = z;
+	coefux    = -o;
+	coefuxx   = o;
 	coefuy    = z;
 	coefuyy	  = o;
 	coefuxy   = z;
@@ -213,9 +224,9 @@ case{2}
 
 case{1}
 	PDEname = 'U + Uxx + Uyy = Ut + g';  
-	coefu     = -o; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefu     = -o;
+	coefux    = z;
+	coefuxx   = o;
 	coefuy    = z;
 	coefuyy	  = o;
 	coefuxy   = z;
@@ -223,9 +234,9 @@ case{1}
 
 case{0}
 	PDEname = 'Uxx + Uyy = Ut + g';  
-	coefu     = z; % x^(3/2);
-	coefux    = z; % sin(x) + 1;
-	coefuxx   = o; %exp(x/2);
+	coefu     = z;
+	coefux    = z;
+	coefuxx   = o;
 	coefuy    = z;
 	coefuyy	  = o;
 	coefuxy   = z;
@@ -233,9 +244,9 @@ case{0}
 
 otherwise
 PDEname = 'Uxx + Uyy = Ut + g';  
-coefu     = z; % x^(3/2);
-coefux    = z; % sin(x) + 1;
-coefuxx   = o; %exp(x/2);
+coefu     = z;
+coefux    = z;
+coefuxx   = o;
 coefuy    = z;
 coefuyy	  = o;
 coefuxy   = z;

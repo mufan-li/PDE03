@@ -2,6 +2,18 @@ Notes
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Monday May 25
+
+Checked more complex functions for IVP
+
+Implementing European Rainbow options problem
+ - NaN in DirechletBC(), fixed by setting to zero
+
+Consider working on Neumann BC, since referenced in paper
+ - check notes from notebook
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Friday May 22
 
 Fixed Ut term being time-dependent
