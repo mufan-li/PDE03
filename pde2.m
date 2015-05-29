@@ -19,15 +19,28 @@ coefuxxx = 0; coefuxxxx = 0; rhsd = 0;
 % PDEnoList = [0:5,10:18,20:25];
 
 switch PDEno
+
 case {100}
-	PDEname = 'European Rainbow Option';
+	PDEname = 'Rainbow Option';
 	% Ut = -rU + rxUx + ryUy + 1/2*sgx^2*x^2*Uxx + ...
 	%		1/2*sgy^2*y^2*Uyy + rho*sgx*sgy*xy*Uxy
 	coefu     = -Rf * o;
 	coefux    = Rf * x .* o;
-	coefuxx   = 1/2 * Sx^2 * x.^2;
+	coefuxx   = 1/2 * Sx^2 * x.^2 .* o;
 	coefuy    = Rf * y .* o;
-	coefuyy	  = 1/2 * Sy^2 * y.^2;
+	coefuyy	  = 1/2 * Sy^2 * y.^2 .* o;
+	coefuxy   = rho * Sx * Sy * x .* y;
+	coefut    = o;
+
+case {99}
+	PDEname = 'Rainbow PDE only';
+	% Ut = -rU + rxUx + ryUy + 1/2*sgx^2*x^2*Uxx + ...
+	%		1/2*sgy^2*y^2*Uyy + rho*sgx*sgy*xy*Uxy
+	coefu     = -Rf * o;
+	coefux    = Rf * x .* o;
+	coefuxx   = 1/2 * Sx^2 * x.^2 .* o;
+	coefuy    = Rf * y .* o;
+	coefuyy	  = 1/2 * Sy^2 * y.^2 .* o;
 	coefuxy   = rho * Sx * Sy * x .* y;
 	coefut    = o;
 

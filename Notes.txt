@@ -2,6 +2,40 @@ Notes
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Friday May 29
+
+Couldn't find reason for high convergence
+ - (+/-) sign for Uxy affected convergence rates
+ - Increasing magnitude also affected convergence rates
+
+Bug in Margrabe option
+ - EuroRb should be using t as tau
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday May 26
+
+Check the ADI paper's publication
+ - formula for IT and LCP
+
+Neumann BC
+ - test both ficticious point and one sided
+ - forward for v=0
+ - test assume linearity near Smax for ficticious point
+
+Rainbow European
+ - Stulz
+ - Try discounted BC
+
+Rainbow American
+ - block penalty
+ - operator splitting
+ - convergence with itself
+ - research papers
+ - free boundary
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Monday May 25
 
 Checked more complex functions for IVP

@@ -14,6 +14,17 @@ z = zeros(s);
 
 switch Uno
 
+case {51}
+    Uname = 'sin(x .* y .* t^2)';
+    t1 = sin(x .* y .* t.^2);
+    t2 = y .* t.^2 .* cos(x .* y .* t.^2);
+    t3 = - y.^2 .* t.^4 .* sin(x .* y .* t.^2);
+    t4 = x .* t.^2 .* cos(x .* y .* t.^2);
+    t5 = -x.^2 .* t.^4 .* sin(x .* y .* t.^2);
+    t6 = t.^2 .* cos(x .* y .* t.^2) - ...
+        x .* y .* t.^4 .* sin(x .* y .* t.^2);
+    t7 = 2 * x .* y .* t .* cos(x .* y .* t.^2);
+
 case {50}
     Uname = 'exp(x .* y .* t^2)';
     t1 = exp(x .* y .* t.^2);

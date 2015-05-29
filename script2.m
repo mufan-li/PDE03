@@ -1,15 +1,15 @@
 % higher level script to run script.m
 
 % initialize global vars
-global Uno Uname BCno PDEno PDEname;
+global Uno Uname BCno PDEno PDEname Rbno;
 
 Uno = 6; BCno = 0; PDEno = 0; ntimes = 5;
 nodex = 2.^(2:ntimes+1); nodey = nodex; nodet = nodex;
 
 global T Sx Sy rho Rf K Smin Smax;
 % init variables
-T = 1; Sx = 0.1; Sy = 0.1; rho = 0.3; Rf = 0.05; K = 10;
-Smin = 0; Smax = 1;
+T = 1; Sx = 0.3; Sy = 0.4; rho = 0.3; Rf = 0.05; K = 10;
+Smin = 0; Smax = 100;
 
 % UnoList = [0:8]; % basic debugging
 % PDEnoList = [0:5]; % basic
@@ -19,8 +19,9 @@ Smin = 0; Smax = 1;
 % PDEnoList = [20:25]; % time dependent coef PDEs
 
 % European Rainbow
-UnoList=-1;
+UnoList=-1; % zero 
 PDEnoList=100;
+Rbno = 2; % margrabe
 
 for PDEno = PDEnoList
 	for Uno = UnoList
@@ -38,3 +39,7 @@ for PDEno = PDEnoList
 	end
 end
 
+figure;
+mesh(reshape(uj1,ny-1,nx-1));
+figure;
+mesh(reshape(trueval,ny-1,nx-1));

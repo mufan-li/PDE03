@@ -30,6 +30,7 @@ theta = 1/2; % Crank-Nicolson
 errg = zeros(1, ntimes);
 
 for ni = 1:ntimes
+    tic
 	%%%%%%%%%%%%%%%%%%%
 	% init space vars %
 	%%%%%%%%%%%%%%%%%%%
@@ -63,7 +64,7 @@ for ni = 1:ntimes
     % note - adaptive grid changed inside loop
 
     uj0 = DirechletBC(gridx(2:nx),gridy(2:ny),at); % IC
-
+    uj00 = uj0;
     %%%%%%%%%%%%%%%%%%%%%%%
     % Solve linear system %
     %%%%%%%%%%%%%%%%%%%%%%%
@@ -90,6 +91,8 @@ for ni = 1:ntimes
     end
 	
 	% Calculate error - at the final step
-    errg = errorfd2(ngridx, ngridy, gridx, gridy, ni, uj1, errg, bt);
+    [errg,trueval] = errorfd2(ngridx, ngridy, gridx, gridy, ...
+        ni, uj1, errg, bt);
+    toc
 end
 

@@ -1,5 +1,5 @@
 % function errg = errorfd(ngrid, gridx, n, uvct, nn, errg, truef);
-function errg = errorfd2(ngridx, ngridy, gridx, gridy, ...
+function [errg,trueval] = errorfd2(ngridx, ngridy, gridx, gridy, ...
 						ni, uj1, errg, bt);
 
 global PDEno;
