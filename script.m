@@ -86,7 +86,7 @@ for ni = 1:ntimes
         Aex = Im + (1-theta)*htj*A0;
         rhs = htj*(theta*rhs1 + (1-theta)*rhs0);
 
-        uj1 = Aim\(Aex*uj0-rhs); % note rhs here is not on the rhs
+        uj1 = t_step(uj0, rhs, Aim, Aex, gridx, gridy);
         uj0 = uj1; % move to next step
     end
 	
@@ -95,4 +95,26 @@ for ni = 1:ntimes
         ni, uj1, errg, bt);
     toc
 end
+
+% display PDE, function, and error
+disp(strcat([PDEname,', u = ',Uname]));
+if (max(abs(errg))<1e-10)
+    disp('Solution Exact.');
+    disp(' ');
+else
+    disp(errg);
+    errgr = errg(1:ntimes-1) ./ errg(2:ntimes);
+    disp(errgr);
+end
+
+% plot solution and true value if exists
+figure;
+mesh(reshape(uj1,ny-1,nx-1));
+
+if (norm(trueval)~=0)
+    figure;
+    mesh(reshape(trueval,ny-1,nx-1));
+end
+
+
 

@@ -6,7 +6,7 @@ global Uno Uname BCno PDEno PDEname Rbno;
 Uno = 6; BCno = 0; PDEno = 0; ntimes = 5;
 nodex = 2.^(2:ntimes+1); nodey = nodex; nodet = nodex;
 
-global T Sx Sy rho Rf K Smin Smax;
+global T Sx Sy rho Rf K Smin Smax Penalty;
 % init variables
 T = 1; Sx = 0.3; Sy = 0.4; rho = 0.3; Rf = 0.05; K = 10;
 Smin = 0; Smax = 100;
@@ -21,25 +21,11 @@ Smin = 0; Smax = 100;
 % European Rainbow
 UnoList=-1; % zero 
 PDEnoList=100;
-Rbno = 2; % margrabe
+Rbno = 10; % margrabe
+Penalty = 0;
 
 for PDEno = PDEnoList
 	for Uno = UnoList
 		script;
-
-		disp(strcat([PDEname,', u = ',Uname]));
-		if (max(abs(errg))<1e-10)
-			disp('Solution Exact.');
-			disp(' ');
-		else
-			disp(errg);
-			errgr = errg(1:ntimes-1) ./ errg(2:ntimes);
-			disp(errgr);
-		end
 	end
 end
-
-figure;
-mesh(reshape(uj1,ny-1,nx-1));
-figure;
-mesh(reshape(trueval,ny-1,nx-1));

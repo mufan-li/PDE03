@@ -50,6 +50,7 @@ switch Rbno
 
 	otherwise
 		% case 0
+		% note when Uno = -1, this returns zero, which is desired
 		t1 = truevd2(x, y, t);
 end
 

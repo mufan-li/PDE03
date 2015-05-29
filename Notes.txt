@@ -10,6 +10,9 @@ Couldn't find reason for high convergence
 
 Bug in Margrabe option
  - EuroRb should be using t as tau
+ - incorrect formula
+
+Need to implement convergence for American types
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
