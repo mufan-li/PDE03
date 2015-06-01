@@ -21,7 +21,7 @@ Smin = 0; Smax = 100;
 % European Rainbow
 UnoList=-1; % zero 
 PDEnoList=100;
-RbnoList = [13]; % Euro 0:2, Amer 10:13
+RbnoList = [12:15]; % Euro 0:2, Amer 10:15
 PenaltyList = 1:3;
 
 for PDEno = PDEnoList
