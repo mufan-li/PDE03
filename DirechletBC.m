@@ -12,6 +12,12 @@ function [u_val] = DirechletBC(x,y,t)
 
     if (PDEno == 100)
         switch Rbno
+        case {13}
+            % American Max Put
+            RbName = 'American Max Put';
+            for i = 1:mx
+                u_val((1:my) + (i-1)*(my)) = max(max(K-x(i),K-y),0);
+            end
         case {12}
             % American Max Call
             RbName = 'American Max Call';

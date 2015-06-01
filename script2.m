@@ -3,7 +3,7 @@
 % initialize global vars
 global Uno Uname BCno PDEno PDEname Rbno RbName;
 
-Uno = 6; BCno = 0; PDEno = 0; ntimes = 4;
+Uno = 6; BCno = 0; PDEno = 0; ntimes = 5;
 nodex = 2.^(2:ntimes+1); nodey = nodex; nodet = nodex;
 
 global T Sx Sy rho Rf K Smin Smax Penalty PenaltyName;
@@ -21,7 +21,7 @@ Smin = 0; Smax = 100;
 % European Rainbow
 UnoList=-1; % zero 
 PDEnoList=100;
-RbnoList = [10:12]; % Euro 0:2, Amer 10:12
+RbnoList = [13]; % Euro 0:2, Amer 10:13
 PenaltyList = 1:3;
 
 for PDEno = PDEnoList
