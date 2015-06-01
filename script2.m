@@ -1,14 +1,14 @@
 % higher level script to run script.m
 
 % initialize global vars
-global Uno Uname BCno PDEno PDEname Rbno;
+global Uno Uname BCno PDEno PDEname Rbno RbName;
 
-Uno = 6; BCno = 0; PDEno = 0; ntimes = 5;
+Uno = 6; BCno = 0; PDEno = 0; ntimes = 4;
 nodex = 2.^(2:ntimes+1); nodey = nodex; nodet = nodex;
 
-global T Sx Sy rho Rf K Smin Smax Penalty;
+global T Sx Sy rho Rf K Smin Smax Penalty PenaltyName;
 % init variables
-T = 1; Sx = 0.3; Sy = 0.4; rho = 0.3; Rf = 0.05; K = 10;
+T = 2; Sx = 0.05; Sy = 0.2; rho = -0.8; Rf = 0.05; K = 30;
 Smin = 0; Smax = 100;
 
 % UnoList = [0:8]; % basic debugging
@@ -21,11 +21,15 @@ Smin = 0; Smax = 100;
 % European Rainbow
 UnoList=-1; % zero 
 PDEnoList=100;
-Rbno = 10; % margrabe
-Penalty = 0;
+RbnoList = [10:12]; % Euro 0:2, Amer 10:12
+PenaltyList = 1:3;
 
 for PDEno = PDEnoList
 	for Uno = UnoList
-		script;
+		for Rbno = RbnoList
+			for Penalty = PenaltyList
+				script;
+			end
+		end
 	end
 end

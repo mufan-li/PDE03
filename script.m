@@ -65,6 +65,8 @@ for ni = 1:ntimes
 
     uj0 = DirechletBC(gridx(2:nx),gridy(2:ny),at); % IC
     uj00 = uj0;
+    aux = zeros(size(uj0));
+    P = spdiag(aux);
     %%%%%%%%%%%%%%%%%%%%%%%
     % Solve linear system %
     %%%%%%%%%%%%%%%%%%%%%%%
@@ -86,34 +88,46 @@ for ni = 1:ntimes
         Aex = Im + (1-theta)*htj*A0;
         rhs = htj*(theta*rhs1 + (1-theta)*rhs0);
 
-        uj1 = t_step(uj0, rhs, Aim, Aex, gridx, gridy);
+        [uj1,aux] = t_step(uj0, rhs, Aim, Aex, gridx, gridy, aux, htj);
         uj0 = uj1; % move to next step
     end
 	
 	% Calculate error - at the final step
     [errg,trueval] = errorfd2(ngridx, ngridy, gridx, gridy, ...
         ni, uj1, errg, bt);
-    toc
+    % toc
 end
 
 % display PDE, function, and error
 disp(strcat([PDEname,', u = ',Uname]));
-if (max(abs(errg))<1e-10)
-    disp('Solution Exact.');
-    disp(' ');
-else
+disp(strcat([RbName,', ',PenaltyName]));
+
+switch Rbno
+case {10,11,12}
+    errgd = errg(1:ntimes-1) - errg(2:ntimes);
+    errgr = errgd(1:ntimes-2) ./ errgd(2:ntimes-1);
     disp(errg);
-    errgr = errg(1:ntimes-1) ./ errg(2:ntimes);
+    disp(errgd);
     disp(errgr);
+
+otherwise
+    if (max(abs(errg))<1e-10)
+        disp('Solution Exact.');
+        disp(' ');
+    else
+        disp(errg);
+        errgr = errg(1:ntimes-1) ./ errg(2:ntimes);
+        disp(errgr);
+    end
 end
 
 % plot solution and true value if exists
 figure;
-mesh(reshape(uj1,ny-1,nx-1));
+mesh(gridy(2:ny),gridx(2:nx),reshape(uj1,ny-1,nx-1));
 
 if (norm(trueval)~=0)
     figure;
-    mesh(reshape(trueval,ny-1,nx-1));
+    mesh(gridy(2:ny),gridx(2:nx),reshape(trueval,ny-1,nx-1));
 end
 
 

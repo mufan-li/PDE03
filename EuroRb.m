@@ -1,11 +1,12 @@
 % function [t1] = EuroRb(x, y, t);
 % - returns value of the European Rainbown options
 function [t1] = EuroRb(x, y, t);
-global Rbno T Sx Sy rho Rf K Smin Smax;
+global Rbno RbName T Sx Sy rho Rf K Smin Smax;
 
 switch Rbno
 	case {2}
-		% Max Payoff
+		% Max Call
+		RbName = 'European Max Call';
 		s = sqrt(Sx^2 + Sy^2 - 2*rho * Sx * Sy);
 
 		d12p = ( log(x./y) + 1/2*s^2.*(t) ) ./ (s .* sqrt(t));
@@ -28,6 +29,7 @@ switch Rbno
 			- K * exp(-Rf*t) * (1 - N2cdf(-d1m,-d2m,rho));
 	case {1}
 		% Max Payoff
+		RbName = 'European Max Payoff';
 		s = sqrt(Sx^2 + Sy^2 - 2*rho * Sx * Sy);
 		d12p = ( log(x./y) + 1/2*s^2.*(t) ) ./ (s .* sqrt(t));
 		d12p(isnan(d12p)) = 0; % NaN when 0/0 - value is zero
@@ -41,6 +43,7 @@ switch Rbno
 
 	case {0}
 		% Margrabe
+		RbName = 'European Margrabe';
 		s = sqrt(Sx^2 + Sy^2 - 2*rho * Sx * Sy);
 		d1 = ( log(x./y) + 1/2*s^2.*(t) ) ./ (s .* sqrt(t));
 		d1(isnan(d1)) = 0; % NaN when 0/0 - value is zero
