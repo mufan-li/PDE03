@@ -2,6 +2,13 @@ Notes
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Monday June 1
+
+added more American calls and puts
+added penalty iteration and operator splitting
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Friday May 29
 
 Couldn't find reason for high convergence

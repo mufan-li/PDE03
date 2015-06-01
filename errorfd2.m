@@ -8,7 +8,7 @@ trueval = zeros(size(uj1));
 
 switch Rbno
 
-case {10,11,12,13}
+case {10,11,12,13,14,15}
 	errg(1,ni) = intp(uj1,gridx(2:ngridx-1),gridy(2:ngridy-1),K,K);
 
 otherwise

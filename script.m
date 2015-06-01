@@ -103,7 +103,7 @@ disp(strcat([PDEname,', u = ',Uname]));
 disp(strcat([RbName,', ',PenaltyName]));
 
 switch Rbno
-case {10,11,12,13}
+case {10,11,12,13,14,15}
     errgd = errg(1:ntimes-1) - errg(2:ntimes);
     errgr = errgd(1:ntimes-2) ./ errgd(2:ntimes-1);
     disp(errg);
