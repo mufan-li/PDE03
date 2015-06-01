@@ -4,15 +4,17 @@
 % u(x,t0) = g0(x)
 
 function [u_val] = DirechletBC(x,y,t)
-    global PDEno Rbno RbName Rf K T;
+    global PDEno Rbno RbName Rf K T OptionType;
 
     mx = length(x);
     my = length(y);
     u_val = zeros(mx*my,1);
+    OptionType = 1;
 
     if (PDEno == 100)
         switch Rbno
         case {15}
+            RbName = 'American Min Put';
             % American Min Put
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = max(min(K-x(i),K-y),0);
@@ -49,6 +51,7 @@ function [u_val] = DirechletBC(x,y,t)
             end
         otherwise
             % All European Rainbow 
+            OptionType = 0;
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = EuroRb(x(i),y,t);
             end

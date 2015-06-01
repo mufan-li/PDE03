@@ -7,6 +7,7 @@ Uno = 6; BCno = 0; PDEno = 0; ntimes = 5;
 nodex = 2.^(2:ntimes+1); nodey = nodex; nodet = nodex;
 
 global T Sx Sy rho Rf K Smin Smax Penalty PenaltyName;
+global OptionType;
 % init variables
 T = 2; Sx = 0.05; Sy = 0.2; rho = -0.8; Rf = 0.05; K = 30;
 Smin = 0; Smax = 100;

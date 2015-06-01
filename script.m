@@ -102,8 +102,8 @@ end
 disp(strcat([PDEname,', u = ',Uname]));
 disp(strcat([RbName,', ',PenaltyName]));
 
-switch Rbno
-case {10,11,12,13,14,15}
+switch OptionType
+case {1}
     errgd = errg(1:ntimes-1) - errg(2:ntimes);
     errgr = errgd(1:ntimes-2) ./ errgd(2:ntimes-1);
     disp(errg);
@@ -122,8 +122,8 @@ otherwise
 end
 
 % plot solution and true value if exists
-figure;
-mesh(gridy(2:ny),gridx(2:nx),reshape(uj1,ny-1,nx-1));
+% figure;
+% mesh(gridy(2:ny),gridx(2:nx),reshape(uj1,ny-1,nx-1));
 
 if (norm(trueval)~=0)
     figure;
