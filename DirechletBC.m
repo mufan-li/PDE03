@@ -13,6 +13,16 @@ function [u_val] = DirechletBC(x,y,t)
 
     if (PDEno == 100)
         switch Rbno
+        case {17}
+            RbName = 'American Spread Put';
+            for i = 1:mx
+                u_val((1:my) + (i-1)*(my)) = max(-x(i)+y+K,0);
+            end
+        case {16}
+            RbName = 'American Spread Call';
+            for i = 1:mx
+                u_val((1:my) + (i-1)*(my)) = max(x(i)-y-K,0);
+            end
         case {15}
             RbName = 'American Min Put';
             % American Min Put

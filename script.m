@@ -43,7 +43,7 @@ for ni = 1:ntimes
     numeqx = neqx;
     hx = (bx-ax)/nx;
     gridx = ax + hx*[0:nx]; gridxu = gridx;
-    % gridx = nugrid(gridxu,ax,bx,1); %non-uniform spacing
+    gridx = nugrid(gridxu,ax,bx,21); %non-uniform spacing
 
     ny = nodey(ni); % for specific node counts
     ngridy = ny+1; %ninty(nn) = ny;
@@ -51,7 +51,7 @@ for ni = 1:ntimes
     numeqy = neqy;	% n-1 for D, n for DN and periodic, n+1 for N
     hy = (by-ay)/ny;
     gridy = ay + hy*[0:ny]; gridyu = gridy;
-    % gridy = nugrid(gridyu,ay,by,1); %non-uniform spacing
+    gridy = nugrid(gridyu,ay,by,21); %non-uniform spacing
 
     %%%%%%%%%%%%
     % time dim %
@@ -103,8 +103,8 @@ disp(strcat([PDEname,', u = ',Uname]));
 disp(strcat([RbName,', ',PenaltyName]));
 
 switch OptionType
-case {1}
-    errgd = errg(1:ntimes-1) - errg(2:ntimes);
+case {0,1}
+    errgd = errg(2:ntimes) - errg(1:ntimes-1);
     errgr = errgd(1:ntimes-2) ./ errgd(2:ntimes-1);
     disp(errg);
     disp(errgd);
@@ -124,11 +124,13 @@ end
 % plot solution and true value if exists
 % figure;
 % mesh(gridy(2:ny),gridx(2:nx),reshape(uj1,ny-1,nx-1));
+% figure;
+% mesh(gridy(2:ny),gridx(2:nx),reshape(uj00,ny-1,nx-1));
 
-if (norm(trueval)~=0)
-    figure;
-    mesh(gridy(2:ny),gridx(2:nx),reshape(trueval,ny-1,nx-1));
-end
+% if (norm(trueval)~=0)
+%     figure;
+%     mesh(gridy(2:ny),gridx(2:nx),reshape(trueval,ny-1,nx-1));
+% end
 
 
 

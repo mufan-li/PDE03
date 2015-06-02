@@ -2,10 +2,27 @@ Notes
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Tuesday June 2
+
+Confirmed that European Margrabe is correct with MATLAB
+American Margrabe/Spread relatively consistent
+Non-uniform grid have better error properties
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Monday June 1
 
 added more American calls and puts
 added penalty iteration and operator splitting
+still need results to compare to
+
+derived formulation for Neumann BC
+
+for each MC path
+ - need to simulate 2 random vectors
+ - calculate the actual price
+ - discount to present value at risk-free
+average at the end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
