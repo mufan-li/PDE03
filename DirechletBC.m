@@ -13,6 +13,16 @@ function [u_val] = DirechletBC(x,y,t)
 
     if (PDEno == 100)
         switch Rbno
+        case {19}
+            RbName = 'American Arithmetic Average Put';
+            for i = 1:mx
+                u_val((1:my) + (i-1)*(my)) = max(K-(x(i)+y)/2,0);
+            end
+        case {18}
+            RbName = 'American Geometric Average Put';
+            for i = 1:mx
+                u_val((1:my) + (i-1)*(my)) = max(K-real(sqrt(x(i).*y)),0);
+            end
         case {17}
             RbName = 'American Spread Put';
             for i = 1:mx
@@ -68,6 +78,7 @@ function [u_val] = DirechletBC(x,y,t)
         end
         
     else
+        OptionType = 0;
         for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = truevd2(x(i),y,t)';
         end

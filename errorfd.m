@@ -8,6 +8,6 @@ for i = 2:ngridx-1
 		truevd(gridx(i),gridy(2:ngridy-1));
 end
 
-errg(1,ni) = max(trueval - uj1);
+errg(1,ni) = max(abs(trueval - uj1));
 
 end

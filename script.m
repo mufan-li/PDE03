@@ -39,19 +39,19 @@ for ni = 1:ntimes
 
 	nx = nodex(ni); % for specific node counts
     ngridx = nx+1; %nintx(nn) = nx;
-    neqx = nx-1; 
+    neqx = nx+1; 
     numeqx = neqx;
     hx = (bx-ax)/nx;
     gridx = ax + hx*[0:nx]; gridxu = gridx;
-    gridx = nugrid(gridxu,ax,bx,21); %non-uniform spacing
+    % gridx = nugrid(gridxu,ax,bx,21); %non-uniform spacing
 
     ny = nodey(ni); % for specific node counts
     ngridy = ny+1; %ninty(nn) = ny;
-    neqy = ny-1; 
+    neqy = ny+1; 
     numeqy = neqy;	% n-1 for D, n for DN and periodic, n+1 for N
     hy = (by-ay)/ny;
     gridy = ay + hy*[0:ny]; gridyu = gridy;
-    gridy = nugrid(gridyu,ay,by,21); %non-uniform spacing
+    % gridy = nugrid(gridyu,ay,by,21); %non-uniform spacing
 
     %%%%%%%%%%%%
     % time dim %
@@ -63,7 +63,7 @@ for ni = 1:ntimes
     gridt = at + ht*[0:nt];
     % note - adaptive grid changed inside loop
 
-    uj0 = DirechletBC(gridx(2:nx),gridy(2:ny),at); % IC
+    uj0 = DirechletBC(gridx,gridy,at); % IC
     uj00 = uj0;
     aux = zeros(size(uj0));
     P = spdiag(aux);
@@ -77,18 +77,19 @@ for ni = 1:ntimes
         htj = tj1 - tj; % adaptive time step
 
         % assume time dependent coefficients
-        [rhs0, coefs0] = rhscfd2(nx, ny, gridx, gridy, tj);
-        [rhs1, coefs1] = rhscfd2(nx, ny, gridx, gridy, tj1);
+        [rhs0, coefs0, b0] = rhscfd2(nx, ny, gridx, gridy, tj);
+        [rhs1, coefs1, b1] = rhscfd2(nx, ny, gridx, gridy, tj1);
 
-        A0 = cfd2(nx, ny, gridx, gridy, coefs0);
-        A1 = cfd2(nx, ny, gridx, gridy, coefs1);
-        Im = speye(size(A0));
+        [A0,A0d,A0b] = cfd2(nx, ny, gridx, gridy, coefs0);
+        [A1,A1d,A1b,Ix,Iy] = cfd2(nx, ny, gridx, gridy, coefs1);
+        Im = kron(Ix,Iy);
 
-        Aim = Im - theta*htj*A1;
-        Aex = Im + (1-theta)*htj*A0;
-        rhs = htj*(theta*rhs1 + (1-theta)*rhs0);
+        Aim = Im - theta*htj*A1d + A1b;
+        Aex = Im + (1-theta)*htj*A0d;
+        rhs = htj*(theta*rhs1 + (1-theta)*rhs0) - b1;
 
-        [uj1,aux] = t_step(uj0, rhs, Aim, Aex, gridx, gridy, aux, htj);
+        [uj1,aux] = t_step(uj0, rhs, Aim, Aex, ...
+                    gridx, gridy, aux, htj, tj1);
         uj0 = uj1; % move to next step
     end
 	
@@ -100,10 +101,10 @@ end
 
 % display PDE, function, and error
 disp(strcat([PDEname,', u = ',Uname]));
-disp(strcat([RbName,', ',PenaltyName]));
+% disp(strcat([RbName,', ',PenaltyName]));
 
 switch OptionType
-case {0,1}
+case {1}
     errgd = errg(2:ntimes) - errg(1:ntimes-1);
     errgr = errgd(1:ntimes-2) ./ errgd(2:ntimes-1);
     disp(errg);
@@ -123,13 +124,13 @@ end
 
 % plot solution and true value if exists
 % figure;
-% mesh(gridy(2:ny),gridx(2:nx),reshape(uj1,ny-1,nx-1));
+% mesh(gridy,gridx,reshape(uj1,ny+1,nx+1));
 % figure;
-% mesh(gridy(2:ny),gridx(2:nx),reshape(uj00,ny-1,nx-1));
+% mesh(gridy,gridx,reshape(uj00,ny+1,nx+1));
 
 % if (norm(trueval)~=0)
 %     figure;
-%     mesh(gridy(2:ny),gridx(2:nx),reshape(trueval,ny-1,nx-1));
+%     mesh(gridy,gridx,reshape(trueval,ny+1,nx+1));
 % end
 
 

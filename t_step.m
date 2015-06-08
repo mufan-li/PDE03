@@ -1,9 +1,9 @@
 function [uj1,aux1] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
-					 aux0, htj)
+					 aux0, htj, tj1)
 
     global Penalty PenaltyName OptionType;
-    m = length(uj0); lx = length(gridx); ly = length(gridy);
-    f = DirechletBC(gridx(2:lx-1),gridy(2:ly-1),0);
+    m = length(uj0); mx = length(gridx); my = length(gridy);
+    f = DirechletBC(gridx,gridy,0);
     aux1 = aux0; % unassigned
 
     switch OptionType
@@ -51,4 +51,6 @@ function [uj1,aux1] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 		PenaltyName = 'None';
         uj1 = Aim\(Aex*uj0 - rhs);
 	end
+
 end
+

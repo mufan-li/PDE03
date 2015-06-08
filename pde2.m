@@ -271,7 +271,7 @@ end
 
 if nargout < 5, coefuxxx = 0; coefuxxxx = 0; end
 rhs = (coefu.*t1 + coefux.*t2 + coefuxx.*t3 ...
-    + coefuy.*t4 + coefuyy.*t5 + coefuxy.*t6 - t7);
+    + coefuy.*t4 + coefuyy.*t5 + coefuxy.*t6 - coefut.*t7);
 % derivative of p*u'' + q*u' + r*u for p, q, r constant
 % rhsd = coefu.*true2 + coefux.*true3 + coefuxx.*true4;
 

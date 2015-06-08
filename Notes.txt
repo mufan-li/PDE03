@@ -2,11 +2,65 @@ Notes
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Monday June 8, 2015
+
+Changed implementation of matrices to include BC
+ - BVPs are straight forward
+ - IVPs require resetting the BC at each time step
+ 	- the BC does not need to be approximated
+
+IVP no longer exact at x^2
+ - errors are quite large
+
+Fixed IVP bug
+ - need to reformulate the linear problem
+ - rhs also not handled properly
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+List of papers
+
+MC American Max Call
+http://eprints.maths.ox.ac.uk/218/1/firth.pdf
+
+MC American Max Put
+http://www.diva-portal.org/smash/get/diva2:301061/FULLTEXT01.pdf
+
+FEM Average Call
+http://link.springer.com/article/10.1007%2Fs10915-007-9150-z
+
+MC/Tree American Max Call
+http://studenttheses.cbs.dk/bitstream/handle/10417/3635/alberto_barola.pdf?sequence=1
+
+ADI Published Version
+http://www.tandfonline.com/doi/pdf/10.1080/1350486X.2015.1009129
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Tuesday June 2
 
 Confirmed that European Margrabe is correct with MATLAB
 American Margrabe/Spread relatively consistent
-Non-uniform grid have better error properties
+Non-uniform grid have better results
+
+More digits in results
+number of steps in penalty
+grid size for x,y
+check values at different points near the strike
+free boundary
+delta/gamma
+check for oscillations in price/greeks
+
+check boundary conditions
+dividend in PDE
+ - exact solutions need dividends as well
+
+adaptive time grids
+ - compare
+
+Neumann BC/PDE
+ - BVPs first
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
