@@ -109,6 +109,8 @@ for ni = 1:ntimes
 end
 
 print(m);
+plot(m,uj1,Gm);
+plot_greeks(m,uj1,Gm,Am);
 
 % plot solution and true value if exists
 % figure;

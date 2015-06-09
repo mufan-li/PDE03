@@ -1,5 +1,4 @@
 % generates a summary of all the fields
-% [nx,ny,nt, nit,uv,dxv, dyv,gxv,gyv, fbv]
 % handle class
 classdef summary < handle
 	properties
@@ -12,6 +11,7 @@ classdef summary < handle
 	methods
 		% initialize
 		function m = summary(ntimes)
+
 			m.colnames = {'nx','ny','nt','nit',...
 				'Price','Change','Ratio',...
 				'Delta_x','Change','Ratio',...
@@ -19,6 +19,8 @@ classdef summary < handle
 				'Gamma_x','Change','Ratio',...
 				'Gamma_y','Change','Ratio',...
 				'Free_Boundary','Change','Ratio'};
+
+			% if additional tab needed
 			m.cvals = { '','','','',...
 				'\t','\t','',...
 				'\t','\t','',...
@@ -26,6 +28,7 @@ classdef summary < handle
 				'\t','\t','',...
 				'\t','\t','',...
 				'\t','\t',''};
+
 			m.pvals = { '%i','%i','%i','%i',...
 				'%6.6f','%6.6f','%2.2f',... % price
 				'%6.6f','%6.6f','%2.2f',... % delta_x
@@ -95,9 +98,41 @@ classdef summary < handle
 				m.value(:,j+1:j+2) = chg( m.value(:,j) );
 			end
 
-			print_cols(m,1:7);
-			print_cols(m,8:13);
-			print_cols(m,14:19);
+			print_cols(m,1:7); % grid and price
+			print_cols(m,8:13); % deltas
+			print_cols(m,14:19); % gammas
+		end
+
+		% plot the final surface
+		function plot(m,uj1,Gm)
+			figure;
+			mesh(Gm.gy,Gm.gx,...
+				reshape(uj1,length(Gm.gy),length(Gm.gx)));
+		end
+
+		% plot the interior surface
+		function plot_int(m,uj1,Gm)
+			nx = length(Gm.gx);
+			ny = length(Gm.gy);
+			v = reshape(uj1,length(Gm.gy),length(Gm.gx));
+			figure;
+			mesh(Gm.gy(2:ny),Gm.gx(2:nx),v(2:ny,2:nx));
+		end
+
+		% plot the surface of greeks
+		% only plot the interior points
+		function plot_greeks(m,uj1,Gm,Am)
+			Adx = kron(Am.A1x,Am.Iy) + Am.Ab;
+			plot_int(m,Adx*uj1,Gm);
+
+			Ady = kron(Am.Ix,Am.A1y) + Am.Ab;
+			plot_int(m,Ady*uj1,Gm);
+
+			Agx = kron(Am.A2x,Am.Iy) + Am.Ab;
+			plot_int(m,Agx*uj1,Gm);
+
+			Agy = kron(Am.Ix,Am.A2y) + Am.Ab;
+			plot_int(m,Agy*uj1,Gm);
 		end
 
 	end % end methods
@@ -120,7 +155,7 @@ function [up] = intp(uj1,Gm)
 	up = dy * um * dx';
 end
 
-% change and ratio
+% return change and ratio as 2 columns
 % vec is a column vector
 function [vec3] = chg(vec)
 	n = length(vec);
