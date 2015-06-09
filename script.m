@@ -28,6 +28,7 @@ ay = Smin; by = Smax; % y dim
 at = 0; bt = T; % t dim (IVP)
 theta = 1/2; % Crank-Nicolson
 errg = zeros(1, ntimes);
+m = summary(ntimes);
 
 for ni = 1:ntimes
     tic
@@ -43,7 +44,7 @@ for ni = 1:ntimes
     numeqx = neqx;
     hx = (bx-ax)/nx;
     gridx = ax + hx*[0:nx]; gridxu = gridx;
-    % gridx = nugrid(gridxu,ax,bx,21); %non-uniform spacing
+    gridx = nugrid(gridxu,ax,bx,Gridno); %non-uniform spacing
 
     ny = nodey(ni); % for specific node counts
     ngridy = ny+1; %ninty(nn) = ny;
@@ -51,13 +52,14 @@ for ni = 1:ntimes
     numeqy = neqy;	% n-1 for D, n for DN and periodic, n+1 for N
     hy = (by-ay)/ny;
     gridy = ay + hy*[0:ny]; gridyu = gridy;
-    % gridy = nugrid(gridyu,ay,by,21); %non-uniform spacing
+    gridy = nugrid(gridyu,ay,by,Gridno); %non-uniform spacing
 
     %%%%%%%%%%%%
     % time dim %
     %%%%%%%%%%%%
 
     nt = nodet(ni);
+    nit = 0; % total # of iterations
     ngridt = nt + 1;
     ht = (bt-at)/nt;
     gridt = at + ht*[0:nt];
@@ -81,52 +83,66 @@ for ni = 1:ntimes
         [rhs1, coefs1, b1] = rhscfd2(nx, ny, gridx, gridy, tj1);
 
         [A0,A0d,A0b] = cfd2(nx, ny, gridx, gridy, coefs0);
-        [A1,A1d,A1b,Ix,Iy] = cfd2(nx, ny, gridx, gridy, coefs1);
-        Im = kron(Ix,Iy);
+        [A1,A1d,A1b,Am] = cfd2(nx, ny, gridx, gridy, coefs1);
+        Im = kron(Am.Ix,Am.Iy);
 
         Aim = Im - theta*htj*A1d + A1b;
         Aex = Im + (1-theta)*htj*A0d;
         rhs = htj*(theta*rhs1 + (1-theta)*rhs0) - b1;
 
-        [uj1,aux] = t_step(uj0, rhs, Aim, Aex, ...
-                    gridx, gridy, aux, htj, tj1);
+        [uj1,aux,nit] = t_step(uj0, rhs, Aim, Aex, ...
+                    gridx, gridy, aux, htj, tj1, nit);
         uj0 = uj1; % move to next step
     end
 	
+    Nm.nx = nx+1; % grid points
+    Nm.ny = ny+1;
+    Nm.nt = nt; % steps
+    Nm.nit = nit;
+    Nm.ni = ni;
+
+    Gm.gx = gridx; Gm.gy = gridy;
+    Gm.x = xp; Gm.y = yp;
+
 	% Calculate error - at the final step
-    [errg,trueval] = errorfd2(ngridx, ngridy, gridx, gridy, ...
-        ni, uj1, errg, bt);
+    % [errg,trueval] = errorfd2(ngridx, ngridy, gridx, gridy, ...
+    %     ni, uj1, errg, bt);
     % toc
+    update(m,uj1,Am,Nm,Gm);
 end
+
+m.print();
 
 % display PDE, function, and error
-disp(strcat([PDEname,', u = ',Uname]));
+% disp(strcat([PDEname,', u = ',Uname]));
 % disp(strcat([RbName,', ',PenaltyName]));
 
-switch OptionType
-case {1}
-    errgd = errg(2:ntimes) - errg(1:ntimes-1);
-    errgr = errgd(1:ntimes-2) ./ errgd(2:ntimes-1);
-    disp(errg);
-    disp(errgd);
-    disp(errgr);
+% switch OptionType
+% case {0,1}
+%     errgd = errg(2:ntimes) - errg(1:ntimes-1);
+%     errgr = errgd(1:ntimes-2) ./ errgd(2:ntimes-1);
+%     disp(errg);
+%     disp(errgd);
+%     disp(errgr);
 
-otherwise
-    if (max(abs(errg))<1e-10)
-        disp('Solution Exact.');
-        disp(' ');
-    else
-        disp(errg);
-        errgr = errg(1:ntimes-1) ./ errg(2:ntimes);
-        disp(errgr);
-    end
-end
+% otherwise
+%     if (max(abs(errg))<1e-10)
+%         disp('Solution Exact.');
+%         disp(' ');
+%     else
+%         disp(errg);
+%         errgr = errg(1:ntimes-1) ./ errg(2:ntimes);
+%         disp(errgr);
+%     end
+% end
 
 % plot solution and true value if exists
 % figure;
 % mesh(gridy,gridx,reshape(uj1,ny+1,nx+1));
 % figure;
 % mesh(gridy,gridx,reshape(uj00,ny+1,nx+1));
+% figure;
+% mesh(gridy,gridx,reshape(aux,ny+1,nx+1));
 
 % if (norm(trueval)~=0)
 %     figure;

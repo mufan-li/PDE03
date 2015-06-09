@@ -1,10 +1,11 @@
-function [uj1,aux1] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
-					 aux0, htj, tj1)
+function [uj1,aux1,nit] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
+					 aux0, htj, tj1, nit)
 
     global Penalty PenaltyName OptionType;
     m = length(uj0); mx = length(gridx); my = length(gridy);
     f = DirechletBC(gridx,gridy,0);
     aux1 = aux0; % unassigned
+    nit = nit+1; % only penalty is different
 
     switch OptionType
     case {1}
@@ -27,8 +28,7 @@ function [uj1,aux1] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 	        	ujk0 = ujk1;
 	        end
 	        uj1 = ujk1;
-
-	        % nstep = nstep+k; % record iterations
+	        nit = nit+k-1; % additional iterations
 
 	    case {2,'Operator Splitting'}
 	    	PenaltyName = 'Operator Splitting';

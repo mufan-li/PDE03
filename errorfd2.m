@@ -8,7 +8,7 @@ trueval = zeros(size(uj1));
 
 switch OptionType
 
-case {1}
+case {0,1}
 	errg(1,ni) = intp(uj1,gridx,gridy,K,K);
 
 otherwise

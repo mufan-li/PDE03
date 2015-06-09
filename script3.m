@@ -10,7 +10,7 @@ Price2 = K;
 Vol2 = Sy;
 Corr = rho;
 OptSpec = 'call';
-Strike = 0;
+Strike = K;
 rates = Rf;
 Compounding = -1;
 Basis = 1;
@@ -20,9 +20,10 @@ RateSpec = intenvset('ValuationDate', Settle, 'StartDates', Settle, ...
 StockSpec1 = stockspec(Vol1, Price1);
 StockSpec2 = stockspec(Vol2, Price2);
 
-Price = spreadbyls(RateSpec, StockSpec1, StockSpec2, Settle, ...
-Maturity, OptSpec, Strike, Corr, 'AmericanOpt', OptionType);
-disp(strcat(['MATLAB LSMC: ',num2str(Price)]));
+% avoided due to warnings and inaccuracy
+% Price = spreadbyls(RateSpec, StockSpec1, StockSpec2, Settle, ...
+% Maturity, OptSpec, Strike, Corr, 'AmericanOpt', OptionType);
+% disp(strcat(['MATLAB LSMC: ',num2str(Price)]));
 
 Price = ...
  spreadbyfd(RateSpec, StockSpec1, StockSpec2, Settle, ...
