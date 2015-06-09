@@ -12,7 +12,7 @@ global T Sx Sy rho Rf K Smin Smax Penalty PenaltyName;
 global OptionType;
 % init variables
 T = 1; Sx = 0.5; Sy = Sx; rho = -0.5; Rf = 0.03; K = 100;
-xp = K; yp = K; % points to evaluate
+xp = K-10; yp = K-10; % points to evaluate
 Smin = 0; Smax = 500;
 
 % UnoList = [0:8]; % basic debugging
@@ -25,9 +25,9 @@ Smin = 0; Smax = 500;
 % European Rainbow
 UnoList=-1; % zero 
 PDEnoList=100;
-RbnoList = [16]; % Euro 0:2, Amer 10:19
+RbnoList = [19]; % Euro 0:2, Amer 10:19
 % RbnoList = 0;
-PenaltyList = 2;
+PenaltyList = 2:3;
 
 for PDEno = PDEnoList
 	for Uno = UnoList

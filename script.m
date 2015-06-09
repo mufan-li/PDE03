@@ -28,7 +28,7 @@ ay = Smin; by = Smax; % y dim
 at = 0; bt = T; % t dim (IVP)
 theta = 1/2; % Crank-Nicolson
 errg = zeros(1, ntimes);
-m = summary(ntimes);
+m = summary(ntimes); % summary class
 
 for ni = 1:ntimes
     tic
@@ -101,40 +101,14 @@ for ni = 1:ntimes
     Nm.nit = nit;
     Nm.ni = ni;
 
-    Gm.gx = gridx; Gm.gy = gridy;
-    Gm.x = xp; Gm.y = yp;
+    Gm.gx = gridx; Gm.gy = gridy; % grids
+    Gm.x = xp; Gm.y = yp; % points to evaluate
 
-	% Calculate error - at the final step
-    % [errg,trueval] = errorfd2(ngridx, ngridy, gridx, gridy, ...
-    %     ni, uj1, errg, bt);
-    % toc
+    % storing summary
     update(m,uj1,Am,Nm,Gm);
 end
 
-m.print();
-
-% display PDE, function, and error
-% disp(strcat([PDEname,', u = ',Uname]));
-% disp(strcat([RbName,', ',PenaltyName]));
-
-% switch OptionType
-% case {0,1}
-%     errgd = errg(2:ntimes) - errg(1:ntimes-1);
-%     errgr = errgd(1:ntimes-2) ./ errgd(2:ntimes-1);
-%     disp(errg);
-%     disp(errgd);
-%     disp(errgr);
-
-% otherwise
-%     if (max(abs(errg))<1e-10)
-%         disp('Solution Exact.');
-%         disp(' ');
-%     else
-%         disp(errg);
-%         errgr = errg(1:ntimes-1) ./ errg(2:ntimes);
-%         disp(errgr);
-%     end
-% end
+print(m);
 
 % plot solution and true value if exists
 % figure;
