@@ -6,7 +6,7 @@ function [rhs, coefu, coefux, coefuxx, coefuy, ...
 			coefuyy, coefuxy, coefut] = pde2(x, y, t)
 
 global PDEno PDEname Uno Uname;
-global T Sx Sy rho Rf K Smin Smax;
+global T Sx Sy rho Rf K q1 q2 Smin Smax;
 % global etaA etaB etaC nu mu R eee;
 
 % note only take/return 1d vectors
@@ -25,9 +25,9 @@ case {100}
 	% Ut = -rU + rxUx + ryUy + 1/2*sgx^2*x^2*Uxx + ...
 	%		1/2*sgy^2*y^2*Uyy + rho*sgx*sgy*xy*Uxy
 	coefu     = -Rf * o;
-	coefux    = Rf * x .* o;
+	coefux    = (Rf - q1) * x .* o;
 	coefuxx   = 1/2 * Sx^2 * x.^2 .* o;
-	coefuy    = Rf * y .* o;
+	coefuy    = (Rf - q2) * y .* o;
 	coefuyy	  = 1/2 * Sy^2 * y.^2 .* o;
 	coefuxy   = rho * Sx * Sy * x .* y;
 	coefut    = o;

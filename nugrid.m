@@ -15,6 +15,7 @@ function [gridx] = nugrid(gridxu,ax,bx,Gridno)
             a0 = 20;
             a = grid21a(gridxu,K,Smax,a0);
             gridx = grid21(gridxu,K,Smax,a);
+            gridx(1) = 0; % floating point error causing x<0
             
         case {20}
             %Black Scholes Grid 1

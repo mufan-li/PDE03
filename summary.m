@@ -89,18 +89,19 @@ classdef summary < handle
 		% prints results
 		function print(m)
 			global PDEname Uname RbName PenaltyName;
+			global xp yp T;
 			disp(strcat([PDEname,', u = ',Uname]));
 			disp(strcat([RbName,', ',PenaltyName]));
 
 			% get change/ratio
-			jn = 1:3:(length(m.colnames) - 4);
-			for j = jn+4
-				m.value(:,j+1:j+2) = chg( m.value(:,j) );
+			for j0 = 1:(length(m.colnames) - 4)/3
+				j = (j0-1)*3 + 5;
+				m.value(:,j+1:j+2) = chg( m.value(:,j), j0);
 			end
 
 			print_cols(m,1:7); % grid and price
-			print_cols(m,8:13); % deltas
-			print_cols(m,14:19); % gammas
+			% print_cols(m,8:13); % deltas
+			% print_cols(m,14:19); % gammas
 		end
 
 		% plot the final surface
@@ -116,7 +117,7 @@ classdef summary < handle
 			ny = length(Gm.gy);
 			v = reshape(uj1,length(Gm.gy),length(Gm.gx));
 			figure;
-			mesh(Gm.gy(2:ny),Gm.gx(2:nx),v(2:ny,2:nx));
+			mesh(Gm.gy(2:ny-1),Gm.gx(2:nx-1),v(2:ny-1,2:nx-1));
 		end
 
 		% plot the surface of greeks
@@ -157,12 +158,21 @@ end
 
 % return change and ratio as 2 columns
 % vec is a column vector
-function [vec3] = chg(vec)
+function [vec3] = chg(vec,j0)
+	global xp yp T OptionType;
+
 	n = length(vec);
-	vec1 = vec(2:n) - vec(1:n-1);
-	vec2 = vec1(1:n-2) ./ vec1(2:n-1);
-	vec2(isnan(vec2)) = 0;
-	vec3 = [[0;vec1] , [0;0;vec2]];
+
+	% only return trueval for price for now
+	if (j0==1) & (OptionType==0)
+		vec1 = abs(vec - EuroRb(xp,yp,T));
+	else
+		vec1 = [0;vec(2:n) - vec(1:n-1)];
+	end
+
+	vec2 = vec1(1:n-1) ./ vec1(2:n);
+	vec2(isnan(vec2) | isinf(vec2)) = 0;
+	vec3 = [vec1 , [0;vec2]];
 end
 
 

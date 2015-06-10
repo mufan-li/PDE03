@@ -109,21 +109,9 @@ for ni = 1:ntimes
 end
 
 print(m);
-plot(m,uj1,Gm);
-plot_greeks(m,uj1,Gm,Am);
-
-% plot solution and true value if exists
-% figure;
-% mesh(gridy,gridx,reshape(uj1,ny+1,nx+1));
-% figure;
-% mesh(gridy,gridx,reshape(uj00,ny+1,nx+1));
-% figure;
-% mesh(gridy,gridx,reshape(aux,ny+1,nx+1));
-
-% if (norm(trueval)~=0)
-%     figure;
-%     mesh(gridy,gridx,reshape(trueval,ny+1,nx+1));
-% end
+% plot(m,uj1,Gm);
+% plot_greeks(m,uj1,Gm,Am);
+disp(EuroRb(xp,yp,T))
 
 
 
