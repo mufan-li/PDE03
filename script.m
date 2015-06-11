@@ -111,7 +111,7 @@ end
 print(m);
 % plot(m,uj1,Gm);
 % plot_greeks(m,uj1,Gm,Am);
-disp(EuroRb(xp,yp,T))
+% disp(EuroRb(xp,yp,T))
 
 
 
