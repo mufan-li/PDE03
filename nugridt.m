@@ -1,20 +1,17 @@
 % variable ht step
-function [ht, gridt, dnorm] = nugridt(ht, stepj, pt, T, ucomp,...
+function [ht, gridt] = nugridt(ht, stepj, pt, T, uj1, uj0,...
                                 gridt, dnorm, Rt)
     global Unift Smin Smax;
     switch Unift
         case {1}
             % simple non-uniform
             if (stepj==1)
-%                 ht = ht/10;
                 ht = ht/1e3;
             elseif (stepj>2)
-                ht1 = dnorm * max([Rt DirechletBC(Smin,pt) ...
-                    DirechletBC(Smax,pt) DirechletBC(Smin,pt-ht) ...
-                    DirechletBC(Smax,pt-ht)]) * ht / ...
-                    max(abs(ucomp(:,stepj-1) - ucomp(:,stepj-2)));
+                ht1 = dnorm * max([Rt; uj0; uj1]) * ht / ...
+                    max(abs(uj1 - uj0));
 %                 dnorm = dnorm / 2^(ht1>ht*2);
-                ht = min(ht1,ht*1.5); % restricting growth
+                ht = min(ht1,ht*3); % restricting growth
 %                 ht = ht1;
             end
             

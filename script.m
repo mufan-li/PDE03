@@ -61,22 +61,28 @@ for ni = 1:ntimes
     nt = nodet(ni);
     nit = 0; % total # of iterations
     ngridt = nt + 1;
-    ht = (bt-at)/nt;
-    gridt = at + ht*[0:nt];
+    ht = (bt-at)/nt; htj = ht;
+    gridt = at + ht*[0:nt*3]; % initialize larger
+    tj = gridt(1); tj1 = tj; % for init
+    dnorm = dnorm0 / 2^(ni-1); % half each time
     % note - adaptive grid changed inside loop
 
     uj0 = DirechletBC(gridx,gridy,at); % IC
+    uj1 = uj0; % for initialization
     uj00 = uj0;
     aux = zeros(size(uj0));
-    P = spdiag(aux);
+    % P = spdiag(aux);
     %%%%%%%%%%%%%%%%%%%%%%%
     % Solve linear system %
     %%%%%%%%%%%%%%%%%%%%%%%
 
     for j = 1:nt
-        tj = gridt(j);
-        tj1 = gridt(j+1);
-        htj = tj1 - tj; % adaptive time step
+        tj = tj1;
+        [htj, gridt] = nugridt(htj, j, tj, T, uj1, uj0,...
+                                gridt, dnorm, 1);
+        tj1 = tj + htj;
+
+        uj0 = uj1; % after adaptive time step
 
         % assume time dependent coefficients
         [rhs0, coefs0, b0] = rhscfd2(nx, ny, gridx, gridy, tj);
@@ -92,9 +98,14 @@ for ni = 1:ntimes
 
         [uj1,aux,nit] = t_step(uj0, rhs, Aim, Aex, ...
                     gridx, gridy, aux, htj, tj1, nit);
-        uj0 = uj1; % move to next step
+
+        if (tj1>=T)
+            break
+        end
     end
-	
+	nt = j;
+    gridt = gridt(1:j+1);
+
     Nm.nx = nx+1; % grid points
     Nm.ny = ny+1;
     Nm.nt = nt; % steps

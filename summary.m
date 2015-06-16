@@ -88,10 +88,13 @@ classdef summary < handle
 
 		% prints results
 		function print(m)
-			global PDEname Uname RbName PenaltyName;
-			global xp yp T;
-			disp(strcat([PDEname,', u = ',Uname]));
-			disp(strcat([RbName,', ',PenaltyName]));
+			global PDEname Uname RbName PenaltyName Unift;
+			global xp yp T Gridno Unift;
+			disp([PDEname,', u = ',Uname, ', ',...
+				 RbName,', ',PenaltyName]);
+			disp(['Gridno: ',int2str(Gridno),...
+				', Unift: ',int2str(Unift), ', xp: ', ...
+				num2str(xp), ', yp: ', num2str(yp)]);
 
 			% get change/ratio
 			for j0 = 1:(length(m.colnames) - 4)/3
