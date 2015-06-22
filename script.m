@@ -96,7 +96,7 @@ for ni = 1:ntimes
         Aex = Im + (1-theta)*htj*A0d;
         rhs = htj*(theta*rhs1 + (1-theta)*rhs0) - b1;
 
-        [uj1,aux,nit] = t_step(uj0, rhs, Aim, Aex, ...
+        [uj1,aux,nit,P] = t_step(uj0, rhs, Aim, Aex, ...
                     gridx, gridy, aux, htj, tj1, nit);
 
         if (tj1>=T)
@@ -120,8 +120,8 @@ for ni = 1:ntimes
 end
 
 print(m);
-% plot(m,uj1,Gm);
-% plot_greeks(m,uj1,Gm,Am);
+plot(m,uj1,Gm);
+plot_greeks(m,uj1,Gm,Am);
 % disp(EuroRb(xp,yp,T))
 
 

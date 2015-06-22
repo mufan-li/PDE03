@@ -1,4 +1,4 @@
-function [uj1,aux1,nit] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
+function [uj1,aux1,nit,P] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 					 aux0, htj, tj1, nit)
 
     global Penalty PenaltyName OptionType;
@@ -7,6 +7,8 @@ function [uj1,aux1,nit] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
     aux1 = aux0; % unassigned
     nit = nit+1; % only penalty is different
 
+    P = 0*spdiag(f); % init
+
     switch OptionType
     case {1}
 	    switch Penalty;
@@ -14,7 +16,7 @@ function [uj1,aux1,nit] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 	    	PenaltyName = 'Discrete Penalty';
 	    	tol = 1e-6;
 	    	ujk0 = uj0;
-	    	P = spdiag(uj0<f)/tol;
+	    	P = spdiag((uj0-f)<tol*10)/tol;
 
 	    	for k = 1:100
 	        	ujk1 = (Aim+P)\(Aex*uj0 - rhs + P*f);
