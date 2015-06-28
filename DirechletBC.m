@@ -19,23 +19,26 @@ function [u_val] = DirechletBC(x,y,t)
         switch Rbno
         case {19}
             RbName = 'American Arithmetic Average Put';
+            BCno = 1;
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = max(K-(x(i)+y)/2,0);
             end
         case {18}
             RbName = 'American Geometric Average Put';
+            BCno = 2;
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = ...
                     max(K-real(sqrt(x(i).*y)),0);
             end
         case {17}
             RbName = 'American Spread Put';
+            BCno = 3;
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = max(-x(i)+y+K,0);
             end
         case {16}
             RbName = 'American Spread Call';
-            BCno = 1;
+            BCno = 3;
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = ...
                     max(x(i)-y-K*exp(-Rf*t),0);
@@ -79,6 +82,7 @@ function [u_val] = DirechletBC(x,y,t)
         case {10}
             % American Margrabe
             RbName = 'American Margrabe';
+            % BC is NOT Dirichlet at (xmax,ymax)!
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = max(x(i)-y,0);
             end

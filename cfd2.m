@@ -42,7 +42,7 @@ A1y = spdiags([t0(-hy1./hy0./(hy0+hy1)), ...
         b0((hy1-hy0)./hy0./hy1), ...
         h0(hy0./hy1./(hy0+hy1))], [-1 0 1],ny+1,ny+1);
 
-% temporary solution, need general form
+% general form for the PDE BC
 switch BCno
     case {3} % Spread Call
         Im = kron(Ixn,Iy0) - kron(Jxn,Jy0);

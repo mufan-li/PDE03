@@ -27,7 +27,7 @@ Unift = 1; dnorm0 = 0.05;
 % European Rainbow
 UnoList=-1; % zero 
 PDEnoList=100;
-RbnoList = [16]; % Euro 0:2, Amer 10:19
+RbnoList = [18:19]; % Euro 0:2, Amer 10:19
 % RbnoList = 0;
 PenaltyList = 2;
 
