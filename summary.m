@@ -132,11 +132,11 @@ classdef summary < handle
 			Ady = kron(Am.Ix,Am.A1y) + Am.Ab;
 			plot_int(m,Ady*uj1,Gm);
 
-			Agx = kron(Am.A2x,Am.Iy) + Am.Ab;
-			plot_int(m,Agx*uj1,Gm);
+			% Agx = kron(Am.A2x,Am.Iy) + Am.Ab;
+			% plot_int(m,Agx*uj1,Gm);
 
-			Agy = kron(Am.Ix,Am.A2y) + Am.Ab;
-			plot_int(m,Agy*uj1,Gm);
+			% Agy = kron(Am.Ix,Am.A2y) + Am.Ab;
+			% plot_int(m,Agy*uj1,Gm);
 		end
 
 	end % end methods

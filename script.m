@@ -90,7 +90,7 @@ for ni = 1:ntimes
 
         [A0,A0d,A0b] = cfd2(nx, ny, gridx, gridy, coefs0);
         [A1,A1d,A1b,Am] = cfd2(nx, ny, gridx, gridy, coefs1);
-        Im = kron(Am.Ix,Am.Iy);
+        Im = Am.Im;
 
         Aim = Im - theta*htj*A1d + A1b;
         Aex = Im + (1-theta)*htj*A0d;

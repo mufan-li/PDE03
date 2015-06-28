@@ -2,7 +2,7 @@
 function [rhs, coefs, b] = rhscfd2(nx, ny, gridx, gridy, tj)
 
 % Evaluating Boundary Conditions
-global BC BCno Unif Dim UxStep Uno;
+global BCno Unif Dim UxStep Uno;
 
 mx = nx+1; my = ny+1;
 numeq = mx * my;
@@ -14,11 +14,11 @@ coefs = zeros(m,7); % including y and cross derivatives
 % find coefs - note iterate through y-indices first
 % note - coefs are already in the order the diagonals
 % specific x,y size
-for i = 2:mx-1
-    ind = (2:my-1)+(i-1)*my;
+for i = 1:mx
+    ind = (1:my)+(i-1)*my;
     [rhs(ind), coefs(ind,1), coefs(ind,2), coefs(ind,3), ...
         coefs(ind,4), coefs(ind,5), coefs(ind,6), coefs(ind,7)] =...
-        pde2(gridx(i), gridy(2:ny),tj);
+        pde2(gridx(i), gridy(:),tj);
 end
 
 % need to find rhs
@@ -36,10 +36,17 @@ uny = DirechletBC(gridx(nx+1),gridy,tj);
 
 % add the entire rhs
 % removed and handled otherwise
-b = kron(vfx,ht0(u0y)) + kron(vlx,ht0(uny)) + ...
+switch BCno
+    case {1}
+        % PDE BC, only direchlet at corners and 2 sides
+        b = kron(vfx,ht(u0y)) + kron(vlx,ht0(uny)) + ...
+            kron(vlx,ht(uny)) + kron(ht0(uxn),vly);
+    otherwise
+        b = kron(vfx,ht0(u0y)) + kron(vlx,ht0(uny)) + ...
             kron(ux0,vfy) + kron(uxn,vly);
-
 end
+
+end % end function
 
 % replace head and tail with zero
 function b0 = ht0(vec)
