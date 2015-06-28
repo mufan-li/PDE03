@@ -4,7 +4,7 @@
 global Uno Uname BCno PDEno PDEname Rbno RbName Gridno;
 
 Uno = -1; BCno = 1; PDEno = 100;
-ntimes = 4;
+ntimes = 3;
 Gridno = 0;
 nodex = 2.^((1:ntimes)+2); nodey = nodex; nodet = nodex;
 
@@ -27,7 +27,7 @@ Unift = 1; dnorm0 = 0.05;
 % European Rainbow
 UnoList=-1; % zero 
 PDEnoList=100;
-RbnoList = [12]; % Euro 0:2, Amer 10:19
+RbnoList = [13]; % Euro 0:2, Amer 10:19
 % RbnoList = 0;
 PenaltyList = 2;
 
@@ -35,7 +35,7 @@ for Rbno = RbnoList
 	for Penalty = PenaltyList
 		for Gridno = [0]
 			for Unift = 0
-				for BCno = 0:1
+				for BCno = [0 2]
 					script;
 				end
 			end

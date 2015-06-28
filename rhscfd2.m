@@ -37,8 +37,14 @@ uny = DirechletBC(gridx(nx+1),gridy,tj);
 % add the entire rhs
 % removed and handled otherwise
 switch BCno
+    case {2}
+        % PDE BC, only direchlet at corners and 2 sides
+        % for American Min Call
+        b = kron(vfx,ht0(u0y)) + kron(vlx,ht(uny)) + ...
+            kron(ht0(ux0),vfy) + kron(vlx,ht(u0y));
     case {1}
         % PDE BC, only direchlet at corners and 2 sides
+        % for American Max Call
         b = kron(vfx,ht(u0y)) + kron(vlx,ht0(uny)) + ...
             kron(vlx,ht(uny)) + kron(ht0(uxn),vly);
     otherwise
