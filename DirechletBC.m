@@ -4,7 +4,7 @@
 % u(x,t0) = g0(x)
 
 function [u_val] = DirechletBC(x,y,t)
-    global PDEno Rbno RbName Rf K T q1 q2 OptionType;
+    global PDEno Rbno RbName Rf K T q1 q2 OptionType BCno;
 
     mx = length(x);
     my = length(y);
@@ -13,6 +13,7 @@ function [u_val] = DirechletBC(x,y,t)
     x0 = x; y0 = y;
     x = x0 * exp(-q1*t);
     y = y0 * exp(-q2*t);
+    BCno = 0;
 
     if (PDEno == 100)
         switch Rbno
@@ -34,12 +35,14 @@ function [u_val] = DirechletBC(x,y,t)
             end
         case {16}
             RbName = 'American Spread Call';
+            BCno = 1;
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = ...
                     max(x(i)-y-K*exp(-Rf*t),0);
             end
         case {15}
             RbName = 'American Min Put';
+            BCno = 1;
             % American Min Put
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = max(min(K-x(i),K-y),0);
@@ -47,12 +50,14 @@ function [u_val] = DirechletBC(x,y,t)
         case {14}
             % American Max Put
             RbName = 'American Max Put';
+            BCno = 2;
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = max(max(K-x(i),K-y),0);
             end
         case {13}
             % American Min Call
             RbName = 'American Min Call';
+            BCno = 2;
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = ...
                     max(min(x(i)-K*exp(-Rf*t),y-K*exp(-Rf*t)),0);
@@ -60,6 +65,7 @@ function [u_val] = DirechletBC(x,y,t)
         case {12}
             % American Max Call
             RbName = 'American Max Call';
+            BCno = 1;
             for i = 1:mx
                 u_val((1:my) + (i-1)*(my)) = ...
                     max(max(x(i)-K*exp(-Rf*t),y-K*exp(-Rf*t)),0);

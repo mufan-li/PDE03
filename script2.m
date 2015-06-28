@@ -27,7 +27,7 @@ Unift = 1; dnorm0 = 0.05;
 % European Rainbow
 UnoList=-1; % zero 
 PDEnoList=100;
-RbnoList = [13]; % Euro 0:2, Amer 10:19
+RbnoList = [16]; % Euro 0:2, Amer 10:19
 % RbnoList = 0;
 PenaltyList = 2;
 
@@ -35,9 +35,7 @@ for Rbno = RbnoList
 	for Penalty = PenaltyList
 		for Gridno = [0]
 			for Unift = 0
-				for BCno = [0 2]
-					script;
-				end
+				script;
 			end
 		end
 	end
