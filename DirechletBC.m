@@ -17,6 +17,18 @@ function [u_val] = DirechletBC(x,y,t)
 
     if (PDEno == 100)
         switch Rbno
+        case {31}
+            RbName = 'Heston American Put';
+            BCno = 10;
+            for i = 1:mx
+                u_val((1:my) + (i-1)*(my)) = max(K-x(i),0);
+            end
+        case {30}
+            RbName = 'Heston American Call';
+            BCno = 10;
+            for i = 1:mx
+                u_val((1:my) + (i-1)*(my)) = max(x(i)-K,0);
+            end
         case {19}
             RbName = 'American Arithmetic Average Put';
             BCno = 1;

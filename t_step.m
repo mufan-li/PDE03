@@ -16,14 +16,16 @@ function [uj1,aux1,nit,P] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 	    	PenaltyName = 'Discrete Penalty';
 	    	tol = 1e-6;
 	    	ujk0 = uj0;
-	    	P = spdiag((uj0-f)<tol*10)/tol;
+	    	P = spdiag((uj0-f)<0)/tol;
 
-	    	for k = 1:100
+	    	for k = 1:10
 	        	ujk1 = (Aim+P)\(Aex*uj0 - rhs + P*f);
 	        	P0 = P;
-	        	P = spdiag(ujk1<f)/tol;
+	        	P = spdiag((ujk1-f)<0)/tol;
 
-	        	if (max(abs(ujk1-ujk0)) / max([1;ujk1])) < tol ...
+	        	if (max( ... % component-wise division
+        			abs(ujk1-ujk0) ./ max(ones(size(ujk1)),ujk1) ...
+	        	) < tol ) ...
 	        		|| isequal(P0,P)
 	        		break
 	        	end
@@ -31,6 +33,12 @@ function [uj1,aux1,nit,P] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 	        end
 	        uj1 = ujk1;
 	        nit = nit+k-1; % additional iterations
+
+	    case {4,'Splitting HaHo13'}
+	    	PenaltyName = 'Splitting HaHo13';
+	        vj1 = Aim\(Aex*uj0 - rhs + htj*aux0);
+	        aux1 = max( aux0 - 1/htj*(vj1 - f) ,0);
+	        uj1 = max( vj1-htj*aux0 ,f);
 
 	    case {2,'Operator Splitting'}
 	    	PenaltyName = 'Operator Splitting';

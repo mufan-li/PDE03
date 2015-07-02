@@ -7,6 +7,7 @@ function [rhs, coefu, coefux, coefuxx, coefuy, ...
 
 global PDEno PDEname Uno Uname;
 global T Sx Sy rho Rf K q1 q2 Smin Smax;
+global alp bet gam
 % global etaA etaB etaC nu mu R eee;
 
 % note only take/return 1d vectors
@@ -19,6 +20,19 @@ coefuxxx = 0; coefuxxxx = 0; rhsd = 0;
 % PDEnoList = [0:5,10:18,20:25];
 
 switch PDEno
+
+case {101}
+	PDEname = 'Heston Volatility';
+	% Ut = -rU + 1/2*yx^2*Uxx + rho*gam*y*x * Uxy + 
+	%		1/2*gam^2*y*Uyy + (r-q1)x*Ux + 
+	%		alp*(bet-y)*Uy
+	coefu     = -Rf * o;
+	coefux    = (Rf - q1) * x .* o;
+	coefuxx   = 1/2 * y * x.^2 .* o;
+	coefuy    = alp*(bet - y) .* o;
+	coefuyy	  = 1/2 * gam^2 * y .* o;
+	coefuxy   = rho * gam * x .* y;
+	coefut    = o;
 
 case {100}
 	PDEname = 'Rainbow Option';

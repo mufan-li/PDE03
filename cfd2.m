@@ -6,8 +6,8 @@ function [A,Ad,Ab,Am] = cfd2(nx, ny, gridx, gridy, coefs)
 global BCno;
 
 m = (nx+1) * (ny+1);
-Ix = speye(nx+1); Ix(1,1) = 0; Ix(nx+1,nx+1) = 0;
-Iy = speye(ny+1); Iy(1,1) = 0; Iy(ny+1,ny+1) = 0;
+Ixc = speye(nx+1); Ix = Ixc; Ix(1,1) = 0; Ix(nx+1,nx+1) = 0;
+Iyc = speye(ny+1); Iy = Iyc; Iy(1,1) = 0; Iy(ny+1,ny+1) = 0;
 Ic = speye(m);
 
 Jx = 0 .* speye(nx+1); Jx(1,1) = 1; Jx(nx+1,nx+1) = 1;
@@ -29,46 +29,48 @@ hy0 = hy(1:ny-1)'; hy1 = hy(2:ny)';
 A2x = spdiags([t0(2./hx0./(hx0+hx1)), ...
         b0(-2./hx0./hx1), ...
         h0(2./hx1./(hx0+hx1))], [-1 0 1],nx+1,nx+1);
+A2x = A2fb(A2x,hx,nx);
 
 A1x = spdiags([t0(-hx1./hx0./(hx0+hx1)), ...
         b0((hx1-hx0)./hx0./hx1), ...
         h0(hx0./hx1./(hx0+hx1))],[-1 0 1],nx+1,nx+1);
+A1x = A1fb(A1x,hx,nx);
 
 A2y = spdiags([t0(2./hy0./(hy0+hy1)), ...
         b0(-2./hy0./hy1), ...
         h0(2./hy1./(hy0+hy1))], [-1 0 1],ny+1,ny+1);
+A2y = A2fb(A2y,hy,ny);
 
 A1y = spdiags([t0(-hy1./hy0./(hy0+hy1)), ...
         b0((hy1-hy0)./hy0./hy1), ...
         h0(hy0./hy1./(hy0+hy1))], [-1 0 1],ny+1,ny+1);
+A1y = A1fb(A1y,hy,ny);
 
-% general form for the PDE BC
+% general form for the PDE BC on sides
+% - without discretizations of orthogonal direction
 switch BCno
     case {3} % Spread Call
         Im = kron(Ixn,Iy0) - kron(Jxn,Jy0);
-        Ixp = Ixn; Iyp = Iy0;
 
     case {2} % PDE BC for American Min Call
         Im = kron(Ixn,Iyn) - kron(Jxn,Jyn);
-        Ixp = Ixn; Iyp = Iyn;
 
     case {1} % PDE BC for American Max Call
         Im = kron(Ix0,Ix0) - kron(Jx0,Jx0);
-        Ixp = Ix0; Iyp = Iy0;
 
     otherwise
         Im = kron(Ix,Iy);
-        Ixp = Ix; Iyp = Iy;
 end
 
-Ab = Ic - Im;
+Ab = Ic - Im; % Dirichlet BC
 
 Ad = spdiag(coefs(:,1),m) * Im + ... %u
-    spdiag(coefs(:,2),m) * kron(A1x,Iyp) + ... %ux
-    spdiag(coefs(:,3),m) * kron(A2x,Iyp) + ... %uxx
-    spdiag(coefs(:,4),m) * kron(Ixp,A1y) + ... %uy
-    spdiag(coefs(:,5),m) * kron(Ixp,A2y) + ... %uyy
+    spdiag(coefs(:,2),m) * kron(A1x,Iyc) + ... %ux
+    spdiag(coefs(:,3),m) * kron(A2x,Iyc) + ... %uxx
+    spdiag(coefs(:,4),m) * kron(Ixc,A1y) + ... %uy
+    spdiag(coefs(:,5),m) * kron(Ixc,A2y) + ... %uyy
     spdiag(coefs(:,6),m) * kron(A1x,A1y) ; %uxy
+Ad = Im * Ad; % only apply PDE at interior points
 
 A = Ab + Ad; % BC conditions
 
@@ -113,3 +115,35 @@ end
 function b = b0(vec)
     b = [0;vec;0];
 end
+
+% one-sided discretizations
+function A2 = A2fb(A2,h,n)
+    a = -2*(2*h(1)+2*h(2)+h(3))/h(1)/h(2)/(h(1)+h(2));
+    b = 2*(2*h(1)+h(2)+h(3))/h(2)/h(3)/(h(1)+h(2));
+    c = -2*(2*h(1)+h(2))/h(3)/(h(2)+h(3))/(h(1)+h(2)+h(3));
+    d = -(a+b+c);
+    A1(1,1:4) = [d a b c];
+
+    a = -2*(2*h(n)+2*h(n-1)+h(n-2))/h(n)/h(n-1)/(h(n)+h(n-1));
+    b = 2*(2*h(n)+h(n-1)+h(n-2))/h(n-1)/h(n-2)/(h(n)+h(n-1));
+    c = -2*(2*h(n)+h(n-1))/...
+        h(n-2)/(h(n-1)+h(n-2))/(h(n)+h(n-1)+h(n-2));
+    d = -(a+b+c);
+    A1(n+1,n-2:n+1) = [c b a d];
+end
+
+% one-sided discretizations
+function A1 = A1fb(A1,h,n)
+    A1(1,1:3) = [-(2*h(1) + h(2))/h(1)/(h(1)+h(2)), ...
+        (h(1)+h(2))/h(1)/h(2), ...
+        -h(1)/h(2)/(h(1)+h(2)) ];
+
+    A1(n+1,n-1:n+1) = [h(n)/h(n-1)/(h(n)+h(n-1)), ...
+        -(h(n) + h(n-1))/h(n)/h(n-1), ...
+        (2*h(n) + h(n-1))/h(n)/(h(n) + h(n-1)) ];
+end
+
+
+
+
+

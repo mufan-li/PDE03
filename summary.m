@@ -103,8 +103,8 @@ classdef summary < handle
 			end
 
 			print_cols(m,1:7); % grid and price
-			print_cols(m,8:13); % deltas
-			print_cols(m,14:19); % gammas
+			% print_cols(m,8:13); % deltas
+			% print_cols(m,14:19); % gammas
 		end
 
 		% plot the final surface

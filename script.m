@@ -24,7 +24,7 @@ BC = 'DirechletBC';
 Uname = '';
 % ax = Smin; bx = Smax;
 ax = Smin; bx = Smax;
-ay = Smin; by = Smax; % y dim
+ay = ymin; by = ymax; % y dim
 at = 0; bt = T; % t dim (IVP)
 theta = 1/2; % Crank-Nicolson
 errg = zeros(1, ntimes);
@@ -121,7 +121,7 @@ end
 
 print(m);
 plot(m,uj1,Gm);
-plot_greeks(m,uj1,Gm,Am);
+% plot_greeks(m,uj1,Gm,Am);
 % disp(EuroRb(xp,yp,T))
 
 
