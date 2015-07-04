@@ -18,7 +18,9 @@ classdef summary < handle
 				'Delta_y','Change','Ratio',...
 				'Gamma_x','Change','Ratio',...
 				'Gamma_y','Change','Ratio',...
-				'Free_Boundary','Change','Ratio'};
+				'Free_Boundary','Change','Ratio',...
+				'Cond','Ratio',...
+				'NormInv','Ratio'};
 
 			% if additional tab needed
 			m.cvals = { '','','','',...
@@ -27,7 +29,8 @@ classdef summary < handle
 				'\t','\t','',...
 				'\t','\t','',...
 				'\t','\t','',...
-				'\t','\t',''};
+				'\t','\t','',...
+				'','','',''};
 
 			m.pvals = { '%i','%i','%i','%i',...
 				'%6.6f','%6.6f','%2.2f',... % price
@@ -35,12 +38,14 @@ classdef summary < handle
 				'%6.6f','%6.6f','%2.2f',... % delta_y
 				'%6.6f','%6.6f','%2.2f',... % gamma_x
 				'%6.6f','%6.6f','%2.2f',... % gamma_y
-				'%6.6f','%6.6f','%2.2f'};   % fb
+				'%6.6f','%6.6f','%2.2f',... % fb
+				'%6.0f','%2.2f','%6.0f','%2.2f',... % cond,norm
+				};
 			m.value = zeros(ntimes,length(m.colnames));
 		end
 
 		% updates after each grid
-		function update(m,uj1,Am,Nm,Gm)
+		function update(m,uj1,Am,Nm,Gm,Aim)
 
 			% determine value
 			uv = intp(uj1,Gm);
@@ -59,10 +64,13 @@ classdef summary < handle
 
 			fbv = 0;
 
+			condA = cond(full(Aim),Inf);
+			normA = norm(full(Aim)^-1,Inf);
+
 			% change/ratios calculated at the end
 			m.value(Nm.ni,:) = [Nm.nx,Nm.ny,Nm.nt,Nm.nit,...
 				uv,0,0,dxv,0,0,dyv,0,0,gxv,0,0,gyv,0,0,...
-				fbv,0,0];
+				fbv,0,0,condA,0,normA,0];
 		end
 
 		function print_cols(m,cols)
@@ -97,14 +105,21 @@ classdef summary < handle
 				num2str(xp), ', yp: ', num2str(yp)]);
 
 			% get change/ratio
-			for j0 = 1:(length(m.colnames) - 4)/3
+			% omit first 4 and last 4 columns
+			for j0 = 1:(length(m.colnames) - 8)/3
 				j = (j0-1)*3 + 5;
 				m.value(:,j+1:j+2) = chg( m.value(:,j), j0);
+			end
+			% get ratio of matrix cond and norm
+			for j = length(m.colnames)-2:2:length(m.colnames)
+				m.value(:,j) = ratio(m.value(:,j-1));
 			end
 
 			print_cols(m,1:7); % grid and price
 			% print_cols(m,8:13); % deltas
 			% print_cols(m,14:19); % gammas
+			% print_cols(m,20:22); % fb
+			print_cols(m,23:26); % cond,norm
 		end
 
 		% plot the final surface
@@ -178,4 +193,8 @@ function [vec3] = chg(vec,j0)
 	vec3 = [vec1 , [0;vec2]];
 end
 
-
+% return the ratio as one vector
+function [vec1] = ratio(vec)
+	n = length(vec);
+	vec1 = [0; vec(2:n) ./ vec(1:n-1)];
+end

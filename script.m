@@ -97,7 +97,7 @@ for ni = 1:ntimes
         rhs = htj*(theta*rhs1 + (1-theta)*rhs0) - b1;
 
         [uj1,aux,nit,P] = t_step(uj0, rhs, Aim, Aex, ...
-                    gridx, gridy, aux, htj, tj1, nit);
+                    gridx, gridy, aux, htj, tj1, nit, Im);
 
         if (tj1>=T)
             break
@@ -116,7 +116,7 @@ for ni = 1:ntimes
     Gm.x = xp; Gm.y = yp; % points to evaluate
 
     % storing summary
-    update(m,uj1,Am,Nm,Gm);
+    update(m,uj1,Am,Nm,Gm,Aim);
 end
 
 print(m);
