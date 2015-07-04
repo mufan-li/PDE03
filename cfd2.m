@@ -1,6 +1,6 @@
 % function [A, A2, A1, A0, A1b, A1f] = cfd2(n, gridx, coefs);
 
-function [A,Ad,Ab,Am] = cfd2(nx, ny, gridx, gridy, coefs)
+function [A,Ad,Ab,An,Am] = cfd2(nx, ny, gridx, gridy, coefs)
 
 % Evaluating Boundary Conditions
 global BCno;
@@ -8,7 +8,7 @@ global BCno;
 m = (nx+1) * (ny+1);
 Ixc = speye(nx+1); Ix = Ixc; Ix(1,1) = 0; Ix(nx+1,nx+1) = 0;
 Iyc = speye(ny+1); Iy = Iyc; Iy(1,1) = 0; Iy(ny+1,ny+1) = 0;
-Ic = speye(m);
+Ic = speye(m); In = 0*Ic; % Neumann
 
 Jx = 0 .* speye(nx+1); Jx(1,1) = 1; Jx(nx+1,nx+1) = 1;
 Jx0 = Jx; Jx0(nx+1,nx+1) = 0; Jxn = Jx; Jxn(1,1) = 0;
@@ -47,8 +47,27 @@ A1y = spdiags([t0(-hy1./hy0./(hy0+hy1)), ...
 A1y = A1fb(A1y,hy,ny);
 
 % general form for the PDE BC on sides
-% - without discretizations of orthogonal direction
+% - with discretizations of orthogonal directions
 switch BCno
+    case {10} % Heston
+        Im = kron(Ix,Iy0);
+        In = kron(Ix,Jyn) + kron(Jxn,Iyc); % Neumann
+        T2yn = 0*Iy; T2yn(ny+1,ny:ny+1) = [2 -2] / hy(ny)^2;
+        T2xn = 0*Ix; T2xn(nx+1,nx:nx+1) = [2 -2] / hx(nx)^2;
+        T1y0 = Jy0 * A1y;
+        An = ...
+        spdiag(coefs(:,1),m) * In + ... %u
+        spdiag(coefs(:,2),m) * kron(Ix*A1x,Jyn)+ ... %ux
+        spdiag(coefs(:,3),m) * (kron(Ix*A2x,Jyn) + ...
+            kron(T2xn,Iyn) ) + ... %uxx
+        spdiag(coefs(:,4),m) * (kron(Jxn,Iy*A1y) + ...
+            kron(Jxn,T1y0) ) + ... %uy
+        spdiag(coefs(:,5),m) * (kron(Ixn,T2yn) + ...
+            kron(Jxn,Iy*A2y) ) ; %uyy
+
+    case {4} % Margrabe
+        Im = kron(Ixn,Iyc) - kron(Jxn,Jy0);
+
     case {3} % Spread Call
         Im = kron(Ixn,Iy0) - kron(Jxn,Jy0);
 
@@ -62,7 +81,7 @@ switch BCno
         Im = kron(Ix,Iy);
 end
 
-Ab = Ic - Im; % Dirichlet BC
+Ab = Ic - Im - In; % Dirichlet BC
 
 Ad = spdiag(coefs(:,1),m) * Im + ... %u
     spdiag(coefs(:,2),m) * kron(A1x,Iyc) + ... %ux
@@ -72,7 +91,7 @@ Ad = spdiag(coefs(:,1),m) * Im + ... %u
     spdiag(coefs(:,6),m) * kron(A1x,A1y) ; %uxy
 Ad = Im * Ad; % only apply PDE at interior points
 
-A = Ab + Ad; % BC conditions
+A = Ab + Ad + An; % BC conditions
 
 Am.Ix = Ix;
 Am.Iy = Iy;
@@ -82,6 +101,7 @@ Am.A1y = A1y;
 Am.A2x = A2x;
 Am.A2y = A2y;
 Am.Ab = Ab;
+Am.An = An;
 
 end
 
@@ -118,29 +138,36 @@ end
 
 % one-sided discretizations
 function A2 = A2fb(A2,h,n)
+    % second order
     a = -2*(2*h(1)+2*h(2)+h(3))/h(1)/h(2)/(h(1)+h(2));
     b = 2*(2*h(1)+h(2)+h(3))/h(2)/h(3)/(h(1)+h(2));
     c = -2*(2*h(1)+h(2))/h(3)/(h(2)+h(3))/(h(1)+h(2)+h(3));
     d = -(a+b+c);
-    A1(1,1:4) = [d a b c];
+    A2(1,1:4) = [d a b c];
 
     a = -2*(2*h(n)+2*h(n-1)+h(n-2))/h(n)/h(n-1)/(h(n)+h(n-1));
     b = 2*(2*h(n)+h(n-1)+h(n-2))/h(n-1)/h(n-2)/(h(n)+h(n-1));
     c = -2*(2*h(n)+h(n-1))/...
         h(n-2)/(h(n-1)+h(n-2))/(h(n)+h(n-1)+h(n-2));
     d = -(a+b+c);
-    A1(n+1,n-2:n+1) = [c b a d];
+    A2(n+1,n-2:n+1) = [c b a d];
 end
 
 % one-sided discretizations
 function A1 = A1fb(A1,h,n)
-    A1(1,1:3) = [-(2*h(1) + h(2))/h(1)/(h(1)+h(2)), ...
-        (h(1)+h(2))/h(1)/h(2), ...
-        -h(1)/h(2)/(h(1)+h(2)) ];
+    %% second order
+    % A1(1,1:3) = [-(2*h(1) + h(2))/h(1)/(h(1)+h(2)), ...
+    %     (h(1)+h(2))/h(1)/h(2), ...
+    %     -h(1)/h(2)/(h(1)+h(2)) ];
 
-    A1(n+1,n-1:n+1) = [h(n)/h(n-1)/(h(n)+h(n-1)), ...
-        -(h(n) + h(n-1))/h(n)/h(n-1), ...
-        (2*h(n) + h(n-1))/h(n)/(h(n) + h(n-1)) ];
+    % A1(n+1,n-1:n+1) = [h(n)/h(n-1)/(h(n)+h(n-1)), ...
+    %     -(h(n) + h(n-1))/h(n)/h(n-1), ...
+    %     (2*h(n) + h(n-1))/h(n)/(h(n) + h(n-1)) ];
+
+    %% first order
+    A1(1,1:2) = [-1/h(1), 1/h(1)];
+
+    A1(n+1,n:n+1) = [-1/h(1), 1/h(1)];
 end
 
 

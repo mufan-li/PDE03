@@ -88,12 +88,12 @@ for ni = 1:ntimes
         [rhs0, coefs0, b0] = rhscfd2(nx, ny, gridx, gridy, tj);
         [rhs1, coefs1, b1] = rhscfd2(nx, ny, gridx, gridy, tj1);
 
-        [A0,A0d,A0b] = cfd2(nx, ny, gridx, gridy, coefs0);
-        [A1,A1d,A1b,Am] = cfd2(nx, ny, gridx, gridy, coefs1);
+        [A0,A0d,A0b,A0n] = cfd2(nx, ny, gridx, gridy, coefs0);
+        [A1,A1d,A1b,A1n,Am] = cfd2(nx, ny, gridx, gridy, coefs1);
         Im = Am.Im;
 
-        Aim = Im - theta*htj*A1d + A1b;
-        Aex = Im + (1-theta)*htj*A0d;
+        Aim = Im - theta*htj*(A1d+A1n) + A1b;
+        Aex = Im + (1-theta)*htj*(A0d+A0n);
         rhs = htj*(theta*rhs1 + (1-theta)*rhs0) - b1;
 
         [uj1,aux,nit,P] = t_step(uj0, rhs, Aim, Aex, ...

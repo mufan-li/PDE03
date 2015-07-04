@@ -15,7 +15,7 @@ function [u_val] = DirechletBC(x,y,t)
     y = y0 * exp(-q2*t);
     BCno = 0;
 
-    if (PDEno == 100)
+    if (ismember(PDEno, [100,101]))
         switch Rbno
         case {31}
             RbName = 'Heston American Put';
@@ -92,6 +92,7 @@ function [u_val] = DirechletBC(x,y,t)
                 u_val((1:my) + (i-1)*(my)) = max(x(i),y);
             end
         case {10}
+            BCno = 4; % incorrect BC!
             % American Margrabe
             RbName = 'American Margrabe';
             % BC is NOT Dirichlet at (xmax,ymax)!

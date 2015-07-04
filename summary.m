@@ -110,7 +110,7 @@ classdef summary < handle
 		% plot the final surface
 		function plot(m,uj1,Gm)
 			figure;
-			mesh(Gm.gy,Gm.gx,...
+			mesh(Gm.gx,Gm.gy,...
 				reshape(uj1,length(Gm.gy),length(Gm.gx)));
 		end
 
@@ -120,7 +120,7 @@ classdef summary < handle
 			ny = length(Gm.gy);
 			v = reshape(uj1,length(Gm.gy),length(Gm.gx));
 			figure;
-			mesh(Gm.gy(2:ny-1),Gm.gx(2:nx-1),v(2:ny-1,2:nx-1));
+			mesh(Gm.gx(2:nx-1),Gm.gy(2:ny-1),v(2:ny-1,2:nx-1));
 		end
 
 		% plot the surface of greeks
