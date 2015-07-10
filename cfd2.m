@@ -46,6 +46,9 @@ A1y = spdiags([t0(-hy1./hy0./(hy0+hy1)), ...
         h0(hy0./hy1./(hy0+hy1))], [-1 0 1],ny+1,ny+1);
 A1y = A1fb(A1y,hy,ny);
 
+% Neumann matrices
+An = 0 * Ic;
+
 % general form for the PDE BC on sides
 % - with discretizations of orthogonal directions
 switch BCno
@@ -55,21 +58,23 @@ switch BCno
         T2yn = 0*Iy; T2yn(ny+1,ny:ny+1) = [2 -2] / hy(ny)^2;
         T2xn = 0*Ix; T2xn(nx+1,nx:nx+1) = [2 -2] / hx(nx)^2;
         T1y0 = Jy0 * A1y;
-        An = ...
-        spdiag(coefs(:,1),m) * In + ... %u
-        spdiag(coefs(:,2),m) * kron(Ix*A1x,Jyn)+ ... %ux
-        spdiag(coefs(:,3),m) * (kron(Ix*A2x,Jyn) + ...
-            kron(T2xn,Iyn) ) + ... %uxx
-        spdiag(coefs(:,4),m) * (kron(Jxn,Iy*A1y) + ...
-            kron(Jxn,T1y0) ) + ... %uy
-        spdiag(coefs(:,5),m) * (kron(Ixn,T2yn) + ...
-            kron(Jxn,Iy*A2y) ) ; %uyy
+
+        Anu = spdiag(coefs(:,1),m) * In; %u
+        Anx = spdiag(coefs(:,2),m) * kron(Ix*A1x,Jyn); %ux
+        Anxx = spdiag(coefs(:,3),m) * ...
+            (kron(Ix*A2x,Jyn) + kron(T2xn,Iyn) ) ; %uxx
+        Any = spdiag(coefs(:,4),m) * ...
+            (kron(Jxn,Iy*A1y) + kron(Jxn,T1y0) ) ; %uy
+        Anyy = spdiag(coefs(:,5),m) * ...
+            (kron(Ixn,T2yn) + kron(Jxn,Iy*A2y) ) ; %uyy
+
+        An = Anu + Anx + Anxx + Any + Anyy;
 
     case {4} % Margrabe
-        Im = kron(Ixn,Iyc) - kron(Jxn,Jy0);
+        Im = kron(Ixn,Iyn);
 
     case {3} % Spread Call
-        Im = kron(Ixn,Iy0) - kron(Jxn,Jy0);
+        Im = kron(Ixn,Iyc) - kron(Jxn,Jy0);
 
     case {2} % PDE BC for American Min Call
         Im = kron(Ixn,Iyn) - kron(Jxn,Jyn);
@@ -83,13 +88,13 @@ end
 
 Ab = Ic - Im - In; % Dirichlet BC
 
-Ad = spdiag(coefs(:,1),m) * Im + ... %u
-    spdiag(coefs(:,2),m) * kron(A1x,Iyc) + ... %ux
-    spdiag(coefs(:,3),m) * kron(A2x,Iyc) + ... %uxx
-    spdiag(coefs(:,4),m) * kron(Ixc,A1y) + ... %uy
-    spdiag(coefs(:,5),m) * kron(Ixc,A2y) + ... %uyy
-    spdiag(coefs(:,6),m) * kron(A1x,A1y) ; %uxy
-Ad = Im * Ad; % only apply PDE at interior points
+Ad0 = spdiag(coefs(:,1),m) * Im; %u
+Adx = spdiag(coefs(:,2),m) * kron(A1x,Iyc); %ux
+Adxx = spdiag(coefs(:,3),m) * kron(A2x,Iyc); %uxx
+Ady = spdiag(coefs(:,4),m) * kron(Ixc,A1y); %uy
+Adyy = spdiag(coefs(:,5),m) * kron(Ixc,A2y); %uyy
+Adxy = spdiag(coefs(:,6),m) * kron(A1x,A1y); %uxy
+Ad = Im * (Ad0+Adx+Adxx+Ady+Adyy+Adxy); % only apply PDE at interior points
 
 A = Ab + Ad + An; % BC conditions
 
@@ -101,7 +106,20 @@ Am.A1y = A1y;
 Am.A2x = A2x;
 Am.A2y = A2y;
 Am.Ab = Ab;
+
+Am.Ad0 = Ad0;
+Am.Adx = Adx;
+Am.Adxx = Adxx;
+Am.Ady = Ady;
+Am.Adyy = Adyy;
+Am.Adxy = Adxy;
+
 Am.An = An;
+% Am.Anu = Anu;
+% Am.Anx = Anx;
+% Am.Anxx = Anxx;
+% Am.Any = Any;
+% Am.Anyy = Anyy;
 
 end
 

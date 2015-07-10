@@ -20,13 +20,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 BC = 'DirechletBC';
-% Dim = 2;
 Uname = '';
-% ax = Smin; bx = Smax;
 ax = Smin; bx = Smax;
 ay = ymin; by = ymax; % y dim
 at = 0; bt = T; % t dim (IVP)
-theta = 1/2; % Crank-Nicolson
+theta0 = 1/2; % Crank-Nicolson
 errg = zeros(1, ntimes);
 m = summary(ntimes); % summary class
 
@@ -44,7 +42,7 @@ for ni = 1:ntimes
     numeqx = neqx;
     hx = (bx-ax)/nx;
     gridx = ax + hx*[0:nx]; gridxu = gridx;
-    gridx = nugrid(gridxu,ax,bx,Gridno); %non-uniform spacing
+    gridx = nugrid(gridxu,ax,bx,Gridxno); %non-uniform spacing
 
     ny = nodey(ni); % for specific node counts
     ngridy = ny+1; %ninty(nn) = ny;
@@ -52,7 +50,7 @@ for ni = 1:ntimes
     numeqy = neqy;	% n-1 for D, n for DN and periodic, n+1 for N
     hy = (by-ay)/ny;
     gridy = ay + hy*[0:ny]; gridyu = gridy;
-    gridy = nugrid(gridyu,ay,by,Gridno); %non-uniform spacing
+    gridy = nugrid(gridyu,ay,by,Gridyno); %non-uniform spacing
 
     %%%%%%%%%%%%
     % time dim %
@@ -71,12 +69,15 @@ for ni = 1:ntimes
     uj1 = uj0; % for initialization
     uj00 = uj0;
     aux = zeros(size(uj0));
+
+    [~, coefs00, ~] = rhscfd2(nx, ny, gridx, gridy, ...
+                                0, 0);
     % P = spdiag(aux);
     %%%%%%%%%%%%%%%%%%%%%%%
     % Solve linear system %
     %%%%%%%%%%%%%%%%%%%%%%%
 
-    for j = 1:nt
+    for j = 1:nt*3
         tj = tj1;
         [htj, gridt] = nugridt(htj, j, tj, T, uj1, uj0,...
                                 gridt, dnorm, 1);
@@ -85,16 +86,20 @@ for ni = 1:ntimes
         uj0 = uj1; % after adaptive time step
 
         % assume time dependent coefficients
-        [rhs0, coefs0, b0] = rhscfd2(nx, ny, gridx, gridy, tj);
-        [rhs1, coefs1, b1] = rhscfd2(nx, ny, gridx, gridy, tj1);
+        [rhs0, coefs0, b0] = rhscfd2(nx, ny, gridx, gridy, ...
+                                tj, coefs00);
+        [rhs1, coefs1, b1] = rhscfd2(nx, ny, gridx, gridy, ...
+                                tj1, coefs00);
 
         [A0,A0d,A0b,A0n] = cfd2(nx, ny, gridx, gridy, coefs0);
         [A1,A1d,A1b,A1n,Am] = cfd2(nx, ny, gridx, gridy, coefs1);
         Im = Am.Im;
 
+        theta = max(j<=3,theta0); % Rannacher Smoothing
         Aim = Im - theta*htj*(A1d+A1n) + A1b;
         Aex = Im + (1-theta)*htj*(A0d+A0n);
         rhs = htj*(theta*rhs1 + (1-theta)*rhs0) - b1;
+        % Aim\(Aex*uj0 - rhs)
 
         [uj1,aux,nit,P] = t_step(uj0, rhs, Aim, Aex, ...
                     gridx, gridy, aux, htj, tj1, nit, Im);
@@ -117,11 +122,15 @@ for ni = 1:ntimes
 
     % storing summary
     update(m,uj1,Am,Nm,Gm,Aim);
+
+    if TrackTime
+        toc
+    end
 end
 
 print(m);
 plot(m,uj1,Gm);
-% plot_greeks(m,uj1,Gm,Am);
+plot_greeks(m,uj1,Gm,Am);
 % disp(EuroRb(xp,yp,T))
 
 

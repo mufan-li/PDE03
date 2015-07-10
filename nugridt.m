@@ -8,8 +8,9 @@ function [ht, gridt] = nugridt(ht, stepj, pt, T, uj1, uj0,...
             if (stepj==1)
                 ht = ht/1e3;
             elseif (stepj>2)
-                ht1 = dnorm * max([Rt; uj0; uj1]) * ht / ...
-                    max(abs(uj1 - uj0));
+                % element wise
+                ht1 = dnorm * ht * ...
+                min(max(max(Rt,uj0),uj1) ./ abs(uj0-uj1));
 %                 dnorm = dnorm / 2^(ht1>ht*2);
                 ht = min(ht1,ht*3); % restricting growth
 %                 ht = ht1;

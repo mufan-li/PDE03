@@ -4,6 +4,10 @@ function [gridx] = nugrid(gridxu,ax,bx,Gridno)
     m = length(gridxu)-1;
     
     switch Gridno
+        case {30}
+            % volatility grid for the Heston model
+            d2 = bx/500;
+            gridx = d2 * sinh(asinh(bx/d2)/m * (0:m));
         case {21}
             %Black Scholes Grid 2
             % a = 4; % a=4 sets grid 21 ~ grid 20
@@ -12,7 +16,7 @@ function [gridx] = nugrid(gridxu,ax,bx,Gridno)
             % gridx = K + a*sinh(c1*gridxu/Smax+c2*(1-gridxu/Smax));
 
             % centered strike
-            a0 = 20;
+            a0 = 10;
             a = grid21a(gridxu,K,Smax,a0);
             gridx = grid21(gridxu,K,Smax,a);
             gridx(1) = 0; % floating point error causing x<0

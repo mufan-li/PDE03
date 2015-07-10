@@ -1,5 +1,5 @@
 % function [rhs, coefs] = rhscfd2(n, gridx)
-function [rhs, coefs, b] = rhscfd2(nx, ny, gridx, gridy, tj)
+function [rhs, coefs, b] = rhscfd2(nx, ny, gridx, gridy, tj, coefs00)
 
 % Evaluating Boundary Conditions
 global BCno Rbno Unif Dim UxStep Uno;
@@ -16,11 +16,16 @@ coefs = zeros(m,7); % including y and cross derivatives
 % find coefs - note iterate through y-indices first
 % note - coefs are already in the order the diagonals
 % specific x,y size
-for i = 1:mx
-    ind = (1:my)+(i-1)*my;
-    [rhs(ind), coefs(ind,1), coefs(ind,2), coefs(ind,3), ...
-        coefs(ind,4), coefs(ind,5), coefs(ind,6), coefs(ind,7)] =...
-        pde2(gridx(i), gridy(:),tj);
+
+if (isequal(coefs00,0))
+    for i = 1:mx
+        ind = (1:my)+(i-1)*my;
+        [rhs(ind), coefs(ind,1), coefs(ind,2), coefs(ind,3), ...
+            coefs(ind,4), coefs(ind,5), coefs(ind,6), coefs(ind,7)] =...
+            pde2(gridx(i), gridy(:),tj);
+    end
+else
+    coefs = coefs00;
 end
 
 % need to find rhs
@@ -58,12 +63,13 @@ switch BCno
     case {4}
         % PDE BC, for Margrabe
         % x=0,x=max,y=max, and (max,max)
-        b = kron(vfx,u0y) + kron(vlx,h(uny));
+        b = kron(vfx,u0y) + kron(ht0(ux0)+t(ux0),vfy);
     case {3}
         % PDE BC, Dirich at x=0 and y=ymax
         % for American Spread Call (x-y)
-        b = kron(vfx,ht0(u0y)) + kron(vlx,ht(uny)) + ...
-            kron(ht0(uxn),vly) + kron(vfx,ht(u0y));
+        % b = kron(vfx,ht0(u0y)) + kron(vlx,ht(uny)) + ...
+        %     kron(ht0(uxn),vly) + kron(vfx,ht(u0y));
+        b = kron(vfx,u0y) + kron(t(ux0),vfy);
     case {2}
         % PDE BC, only dirichlet at corners and min 2 sides
         % for American Min Call
