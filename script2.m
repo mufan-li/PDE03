@@ -4,7 +4,8 @@
 global Uno Uname BCno PDEno PDEname Rbno RbName Gridno;
 
 Uno = -1; BCno = 1; PDEno = 101;
-ntimes = 3;
+ntimes = 4;
+% Gridxno = 0; Gridyno = 0;
 Gridxno = 21; Gridyno = 30;
 nodex = 2.^((1:ntimes)+2); nodey = nodex; nodet = nodex;
 
@@ -21,7 +22,8 @@ alp = 2; bet = 0.2; gam = 0.9;
 xp = K; yp = 0.2; % points to evaluate
 Smin = 0; Smax = 14*K;
 ymin = 0; ymax = 5;
-Unift = 1; dnorm0 = 2;
+Unift = 1;
+dnorm0 = 5;
 TrackTime = 1;
 
 % European Rainbow
@@ -29,12 +31,12 @@ UnoList=-1; % zero
 PDEno = 101;
 % RbnoList = [0,10]; % Euro 0:2, Amer 10:19, Heston 30:31
 RbnoList = 31;
-PenaltyList = 2;
+PenaltyList = 3;
 
 for Rbno = RbnoList
 	for Penalty = PenaltyList
 		for Gridno = [0]
-			for Unift = 0
+			for Unift = 1
 				script;
 			end
 		end
