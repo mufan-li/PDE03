@@ -107,19 +107,19 @@ Am.A2x = A2x;
 Am.A2y = A2y;
 Am.Ab = Ab;
 
-Am.Ad0 = Ad0;
-Am.Adx = Adx;
-Am.Adxx = Adxx;
-Am.Ady = Ady;
-Am.Adyy = Adyy;
-Am.Adxy = Adxy;
+% Am.Ad0 = Ad0;
+% Am.Adx = Adx;
+% Am.Adxx = Adxx;
+% Am.Ady = Ady;
+% Am.Adyy = Adyy;
+% Am.Adxy = Adxy;
 
 Am.An = An;
-% Am.Anu = Anu;
-% Am.Anx = Anx;
-% Am.Anxx = Anxx;
-% Am.Any = Any;
-% Am.Anyy = Anyy;
+Am.Anu = Anu;
+Am.Anx = Anx;
+Am.Anxx = Anxx;
+Am.Any = Any;
+Am.Anyy = Anyy;
 
 end
 

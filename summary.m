@@ -64,8 +64,13 @@ classdef summary < handle
 
 			fbv = 0;
 
-			condA = cond(full(Aim),Inf);
-			normA = norm(full(Aim)^-1,Inf);
+			if (Nm.ni<=3)
+				condA = cond(full(Aim),Inf);
+				normA = norm(full(Aim)^-1,Inf);
+			else
+				condA = 0;
+				normA = 0;
+			end
 
 			% change/ratios calculated at the end
 			m.value(Nm.ni,:) = [Nm.nx,Nm.ny,Nm.nt,Nm.nit,...
