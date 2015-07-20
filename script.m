@@ -42,7 +42,7 @@ for ni = 1:ntimes
     numeqx = neqx;
     hx = (bx-ax)/nx;
     gridx = ax + hx*[0:nx]; gridxu = gridx;
-    gridx = nugrid(gridxu,ax,bx,Gridxno(Gdno)); %non-uniform spacing
+    gridx = nugrid(gridxu,ax,bx,Gridxno(Gdno+1),K); %non-uniform spacing
 
     ny = nodey(ni); % for specific node counts
     ngridy = ny+1; %ninty(nn) = ny;
@@ -50,7 +50,7 @@ for ni = 1:ntimes
     numeqy = neqy;	% n-1 for D, n for DN and periodic, n+1 for N
     hy = (by-ay)/ny;
     gridy = ay + hy*[0:ny]; gridyu = gridy;
-    gridy = nugrid(gridyu,ay,by,Gridyno(Gdno)); %non-uniform spacing
+    gridy = nugrid(gridyu,ay,by,Gridyno(Gdno+1),bet); %non-uniform spacing
 
     %%%%%%%%%%%%
     % time dim %
@@ -62,7 +62,7 @@ for ni = 1:ntimes
     ht = (bt-at)/nt; htj = ht;
     gridt = at + ht*[0:nt*3]; % initialize larger
     tj = gridt(1); tj1 = tj; % for init
-    dnorm = dnorm0 / 2^(ni-1); % half each time
+    dnorm = dnorm0(Penalty) / 2^(ni-1); % half each time
     % note - adaptive grid changed inside loop
 
     uj0 = DirechletBC(gridx,gridy,at); % IC
@@ -91,11 +91,13 @@ for ni = 1:ntimes
         [rhs1, coefs1, b1] = rhscfd2(nx, ny, gridx, gridy, ...
                                 tj1, coefs00);
 
-        [A0,A0d,A0b,A0n] = cfd2(nx, ny, gridx, gridy, coefs0);
-        [A1,A1d,A1b,A1n,Am] = cfd2(nx, ny, gridx, gridy, coefs1);
+        [A0,A0d,A0b,A0n] = cfd2(nx, ny, gridx, gridy, ...
+                                coefs0,bet);
+        [A1,A1d,A1b,A1n,Am] = cfd2(nx, ny, gridx, gridy, ...
+                                coefs1,bet);
         Im = Am.Im;
 
-        theta = max(j<=3,theta0); % Rannacher Smoothing
+        theta = max(ismember(j,1:3),theta0); % Rannacher Smoothing
         Aim = Im - theta*htj*(A1d+A1n) + A1b;
         Aex = Im + (1-theta)*htj*(A0d+A0n);
         rhs = htj*(theta*rhs1 + (1-theta)*rhs0) - b1;
@@ -117,7 +119,7 @@ for ni = 1:ntimes
     Nm.nit = nit;
     Nm.ni = ni;
 
-    Gm.gx = gridx; Gm.gy = gridy; % grids
+    Gm.gx = gridx; Gm.gy = gridy; Gm.gt = gridt; % grids
     Gm.x = xp; Gm.y = yp; % points to evaluate
 
     % storing summary
@@ -128,9 +130,11 @@ for ni = 1:ntimes
     end
 end
 
-print(m);
-plot(m,uj1,Gm);
-plot_greeks(m,uj1,Gm,Am);
+print(m,Display);
+if (Display)
+    plot(m,uj1,Gm);
+    plot_greeks(m,uj1,Gm,Am);
+end
 % disp(EuroRb(xp,yp,T))
 
 

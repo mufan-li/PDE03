@@ -1,9 +1,17 @@
 % non-uniform grid for price
-function [gridx] = nugrid(gridxu,ax,bx,Gridno)
-    global etaB K Smax;
+function [gridx] = nugrid(gridxu,ax,bx,Gridno,K)
+    global etaB;
     m = length(gridxu)-1;
+    Smax = bx;
     
     switch Gridno
+        case {31}
+            % centered strike
+            a0 = 0.1;
+            a = grid21a(gridxu,K,bx,a0);
+            gridx = grid21(gridxu,K,bx,a0);
+            gridx(1) = 0; % floating point error causing x<0
+
         case {30}
             % volatility grid for the Heston model
             d2 = bx/50;

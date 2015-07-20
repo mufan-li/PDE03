@@ -27,7 +27,8 @@ function [u_val] = DirechletBC(x,y,t)
             RbName = 'Heston American Call';
             BCno = 10;
             for i = 1:mx
-                u_val((1:my) + (i-1)*(my)) = max(x(i)-K,0);
+                u_val((1:my) + (i-1)*(my)) = ...
+                    max(x(i)-K*exp(-Rf*t),0);
             end
         case {19}
             RbName = 'American Arithmetic Average Put';

@@ -12,7 +12,7 @@ classdef summary < handle
 		% initialize
 		function m = summary(ntimes)
 
-			m.colnames = {'nx','ny','nt','nit',...
+			m.colnames = {'nx','ny','nt','nit','gtm'...
 				'Price','Change','Ratio',...
 				'Delta_x','Change','Ratio',...
 				'Delta_y','Change','Ratio',...
@@ -23,7 +23,7 @@ classdef summary < handle
 				'NormInv','Ratio'};
 
 			% if additional tab needed
-			m.cvals = { '','','','',...
+			m.cvals = { '','','','','',...
 				'\t','\t','',...
 				'\t','\t','',...
 				'\t','\t','',...
@@ -32,7 +32,7 @@ classdef summary < handle
 				'\t','\t','',...
 				'','','',''};
 
-			m.pvals = { '%i','%i','%i','%i',...
+			m.pvals = { '%i','%i','%i','%i','%i',...
 				'%6.6f','%6.6f','%2.2f',... % price
 				'%6.6f','%6.6f','%2.2f',... % delta_x
 				'%6.6f','%6.6f','%2.2f',... % delta_y
@@ -46,6 +46,9 @@ classdef summary < handle
 
 		% updates after each grid
 		function update(m,uj1,Am,Nm,Gm,Aim)
+
+			% monotonic time steps
+			gtm = gtmf(Gm.gt);
 
 			% determine value
 			uv = intp(uj1,Gm);
@@ -73,7 +76,7 @@ classdef summary < handle
 			end
 
 			% change/ratios calculated at the end
-			m.value(Nm.ni,:) = [Nm.nx,Nm.ny,Nm.nt,Nm.nit,...
+			m.value(Nm.ni,:) = [Nm.nx,Nm.ny,Nm.nt,Nm.nit,gtm,...
 				uv,0,0,dxv,0,0,dyv,0,0,gxv,0,0,gyv,0,0,...
 				fbv,0,0,condA,0,normA,0];
 		end
@@ -100,7 +103,7 @@ classdef summary < handle
 		end
 
 		% prints results
-		function print(m)
+		function print(m,Display)
 			global PDEname Uname RbName PenaltyName Unift;
 			global xp yp T Gdno Unift;
 			disp([PDEname,', u = ',Uname, ', ',...
@@ -112,7 +115,7 @@ classdef summary < handle
 			% get change/ratio
 			% omit first 4 and last 4 columns
 			for j0 = 1:(length(m.colnames) - 8)/3
-				j = (j0-1)*3 + 5;
+				j = (j0-1)*3 + 6;
 				m.value(:,j+1:j+2) = chg( m.value(:,j), j0);
 			end
 			% get ratio of matrix cond and norm
@@ -120,11 +123,13 @@ classdef summary < handle
 				m.value(:,j) = ratio(m.value(:,j-1));
 			end
 
-			print_cols(m,1:7); % grid and price
-			% print_cols(m,8:13); % deltas
-			% print_cols(m,14:19); % gammas
-			% print_cols(m,20:22); % fb
-			print_cols(m,23:26); % cond,norm
+			print_cols(m,1:8); % grid and price
+			if Display
+				print_cols(m,9:14); % deltas
+				print_cols(m,15:20); % gammas
+				% print_cols(m,21:23); % fb
+				print_cols(m,24:27); % cond,norm
+			end
 		end
 
 		% plot the final surface
@@ -203,3 +208,10 @@ function [vec1] = ratio(vec)
 	n = length(vec);
 	vec1 = [0; vec(2:n) ./ vec(1:n-1)];
 end
+
+function [gtm] = gtmf(gridt)
+	mt = length(gridt);
+	ht = gridt(2:mt) - gridt(1:mt-1);
+	gtm = min(ht(2:mt-2) >= ht(1:mt-3));
+end
+

@@ -1,6 +1,6 @@
 % function [A, A2, A1, A0, A1b, A1f] = cfd2(n, gridx, coefs);
 
-function [A,Ad,Ab,An,Am] = cfd2(nx, ny, gridx, gridy, coefs)
+function [A,Ad,Ab,An,Am] = cfd2(nx, ny, gridx, gridy, coefs, bet)
 
 % Evaluating Boundary Conditions
 global BCno;
@@ -44,6 +44,7 @@ A2y = A2fb(A2y,hy,ny);
 A1y = spdiags([t0(-hy1./hy0./(hy0+hy1)), ...
         b0((hy1-hy0)./hy0./hy1), ...
         h0(hy0./hy1./(hy0+hy1))], [-1 0 1],ny+1,ny+1);
+A1y = A1yconv(A1y,gridy,hy,bet); % Heston
 A1y = A1fb(A1y,hy,ny);
 
 % Neumann matrices
@@ -94,7 +95,8 @@ Adxx = spdiag(coefs(:,3),m) * kron(A2x,Iyc); %uxx
 Ady = spdiag(coefs(:,4),m) * kron(Ixc,A1y); %uy
 Adyy = spdiag(coefs(:,5),m) * kron(Ixc,A2y); %uyy
 Adxy = spdiag(coefs(:,6),m) * kron(A1x,A1y); %uxy
-Ad = Im * (Ad0+Adx+Adxx+Ady+Adyy+Adxy); % only apply PDE at interior points
+% only apply PDE at interior points
+Ad = Im * (Ad0+Adx+Adxx+Ady+Adyy+Adxy); 
 
 A = Ab + Ad + An; % BC conditions
 
@@ -188,7 +190,25 @@ function A1 = A1fb(A1,h,n)
     A1(n+1,n:n+1) = [-1/h(1), 1/h(1)];
 end
 
+% one-sided convection for Heston
+function A1yc = A1yconv(A1y,gridy,hy,bet)
+    global PDEno;
+    switch PDEno
+    case {101}
+        my = length(gridy);
+        nbet = sum(gridy<bet);
+        A1yf = spdiag([1./hy,0]) * sptrid(0, -1, 1, my);
+        A1yb = spdiag([0,1./hy]) * sptrid(-1, 1, 0, my);
+        
+        A1yc = A1yb;
+        A1yc(1:nbet,:) = A1yf(1:nbet,:);
 
-
+        % A1y = spdiags([t0(-hy1./hy0./(hy0+hy1)), ...
+        % b0((hy1-hy0)./hy0./hy1), ...
+        % h0(hy0./hy1./(hy0+hy1))], [-1 0 1],ny+1,ny+1);
+    otherwise
+        A1yc = A1y;
+end
+end
 
 
