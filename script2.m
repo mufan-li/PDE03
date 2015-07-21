@@ -4,7 +4,7 @@
 global Uno Uname BCno PDEno PDEname Rbno RbName Gdno;
 
 Uno = -1; BCno = 1; PDEno = 101;
-ntimes = 3;
+ntimes = 5;
 Gdno = 0;
 Gridxno = [0 21]; Gridyno = [0 31];
 nodex = 2.^((1:ntimes)+2); nodey = nodex; nodet = nodex;
@@ -30,12 +30,12 @@ TrackTime = 1; Display = 1;
 UnoList=-1; % zero 
 PDEno = 101;
 % RbnoList = [0,10]; % Euro 0:2, Amer 10:19, Heston 30:31
-RbnoList = 31;
-PenaltyList = 2;
+RbnoList = 30:31;
+PenaltyList = 2:3;
 
 for Rbno = RbnoList
 	for Penalty = PenaltyList
-		for Gdno = 1
+		for Gdno = 0:1
 			for Unift = 1
 				script;
 			end

@@ -16,6 +16,7 @@ function [gridx] = nugrid(gridxu,ax,bx,Gridno,K)
             % volatility grid for the Heston model
             d2 = bx/50;
             gridx = d2 * sinh(asinh(bx/d2)/m * (0:m));
+            
         case {21}
             %Black Scholes Grid 2
             % a = 4; % a=4 sets grid 21 ~ grid 20
