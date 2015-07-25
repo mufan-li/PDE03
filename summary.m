@@ -134,35 +134,60 @@ classdef summary < handle
 		end
 
 		% plot the final surface
-		function plot(m,uj1,Gm)
+		function plot(m,uj1,Gm,xmax,ymax)
 			figure;
-			mesh(Gm.gx,Gm.gy,...
-				reshape(uj1,length(Gm.gy),length(Gm.gx)));
+			mx = length(Gm.gx); my = length(Gm.gy);
+			um = reshape(uj1,my,mx);
+
+			switch nargin
+			case {5}
+				indx = Gm.gx<xmax; indy = Gm.gy<ymax;
+			otherwise
+				indx = 1:mx; indy = 1:my;
+			end
+			mesh(Gm.gx(indx),Gm.gy(indy),um(indy,indx));
 		end
 
 		% plot the interior surface
-		function plot_int(m,uj1,Gm)
+		function plot_int(m,uj1,Gm,xmax,ymax)
 			nx = length(Gm.gx);
 			ny = length(Gm.gy);
 			v = reshape(uj1,length(Gm.gy),length(Gm.gx));
+			gx = Gm.gx(2:nx-1); gy = Gm.gy(2:ny-1);
+			v = v(2:ny-1,2:nx-1);
+
+			switch nargin
+			case {5}
+				indx = gx<=xmax; indy = gy<=ymax;
+			otherwise
+				indx = 1:nx-2; indy = 1:ny-2;
+			end
 			figure;
-			mesh(Gm.gx(2:nx-1),Gm.gy(2:ny-1),v(2:ny-1,2:nx-1));
+			mesh(gx(indx),gy(indy),v(indy,indx));
 		end
 
 		% plot the surface of greeks
 		% only plot the interior points
-		function plot_greeks(m,uj1,Gm,Am)
+		function plot_greeks(m,uj1,Gm,Am,xm,ym)
+			global Smax ymax;
+			switch nargin
+			case {6}
+				% nothing
+			otherwise
+				xm = Smax; ym = ymax;
+			end
+
 			% Adx = kron(Am.A1x,Am.Iy) + Am.Ab;
-			% plot_int(m,Adx*uj1,Gm);
+			% plot_int(m,Adx*uj1,Gm,xm,ym);
 
 			% Ady = kron(Am.Ix,Am.A1y) + Am.Ab;
-			% plot_int(m,Ady*uj1,Gm);
+			% plot_int(m,Ady*uj1,Gm,xm,ym);
 
 			Agx = kron(Am.A2x,Am.Iy) + Am.Ab;
-			plot_int(m,Agx*uj1,Gm);
+			plot_int(m,Agx*uj1,Gm,xm,ym);
 
 			Agy = kron(Am.Ix,Am.A2y) + Am.Ab;
-			plot_int(m,Agy*uj1,Gm);
+			plot_int(m,Agy*uj1,Gm,xm,ym);
 		end
 
 		% plot the interior cross section in the x-dir
@@ -207,7 +232,15 @@ classdef summary < handle
 			mx = length(Gm.gx); my = length(Gm.gy);
 			t = reshape(uj1-f-tol>0,my,mx);
 			ind = zeros(mx,1);
-			indx = Gm.gx<xmax; indy = Gm.gy<ymax;
+
+			% optional inputs
+			switch nargin
+			case {5}
+				indx = Gm.gx<xmax; indy = Gm.gy<ymax;
+			otherwise
+				indx = 1:mx; indy = 1:my;
+			end
+
 			for i = 1:my
 				ind(i) = find(t(i,:),1);
 			end
@@ -216,6 +249,7 @@ classdef summary < handle
 			hold on;
 			um = reshape(uj1,length(Gm.gy),length(Gm.gx));
 			mesh(Gm.gx(indx),Gm.gy(indy),um(indy,indx));
+
 			indu = (ind'-1)*my+(1:mx);
 			plot3(Gm.gx(ind(indy)),Gm.gy(indy),...
 				uj1(indu(indy)),'LineWidth',5);

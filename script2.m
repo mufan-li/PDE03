@@ -11,7 +11,7 @@ nodex = 2.^((1:ntimes)+2); nodey = nodex; nodet = nodex;
 
 global T Sx Sy rho Rf K q1 q2 xp yp;
 global alp bet gam;
-global Smin Smax Unift Penalty PenaltyName OptionType tol;
+global Smin Smax ymax Unift Penalty PenaltyName OptionType tol;
 
 % init variables - two asset
 T = 1; Sx = 0.2; Sy = Sx; rho = 0.5; Rf = 0.05; K = 100;
