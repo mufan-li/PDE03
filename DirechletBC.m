@@ -30,6 +30,14 @@ function [u_val] = DirechletBC(x,y,t)
                 u_val((1:my) + (i-1)*(my)) = ...
                     max(x(i)-K*exp(-Rf*t),0);
             end
+        case {29}
+            RbName = 'Heston European Put';
+            BCno = 10;
+            OptionType = 0;
+            for i = 1:mx
+                u_val((1:my) + (i-1)*(my)) = ...
+                    max(K*exp(-Rf*t)-x(i),0);
+            end
         case {19}
             RbName = 'American Arithmetic Average Put';
             BCno = 1;

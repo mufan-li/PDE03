@@ -1,0 +1,505 @@
+Notes
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+To do
+ - keep track of free boundary
+ - Margrabe/Spread BC
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday July 21
+
+Fully implicit stepping still causes oscillation
+
+Test with given parameters
+Number of iterations
+Penalty term in stoch.vol. paper
+ - squared term
+ - Large ~ 1/tol^2
+
+free boundary surface
+adaptive grids - ccc
+ - De Boor 1974
+ - Grading function and mesh redistribution 1985
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Monday July 20
+
+Heston Papers
+ - formulation 
+ 	http://bfi.cl/papers/Mikhailov%20Nogel%202003%20-%20Heston's%20stochastic%20volatility%20Model%20implementation%20calibration%20and%20some%20extensions.pdf
+ - implementation
+ 	http://arxiv.org/pdf/1502.02963v2.pdf
+
+Added monotonic stepsize column
+Added dnorm adjustment for OS/penalty comparison
+Added same non-uniform grid in y-direction
+ - centered at beta
+Added onesided forward/backward convection discretization
+ - did not help oscillation
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday July 14
+
+Smoothing of 2nd derivatives
+ - grid concentrated near beta
+  - mid point at beta
+ - convection terms forward/backward
+  - forward x-dir
+ - cross section
+
+European solution
+
+Adaptive time-steps
+ - increasing
+ - change dnorm for os to get comparable step sizes
+
+Convergence for Greeks
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Monday July 13
+
+OS
+ - instability fixed by not applying at BC
+ - consider keep for Neumann BC
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Saturday July 11
+
+Non-uniform grid
+ - reducing concentration in y eases instability
+ - spike near (K,0) is related to d2
+ - instability specific to OS
+ - Uxx and Uyy oscillations remain
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Friday July 10
+
+Margrabe/Spread
+ - PDE condition at (xmax,ymax) is unstable
+ - Need more information at BC
+
+Zvan, Forsyth, Vetzal (1998)
+ - used FEM
+
+Adaptive time stepping
+ - dnorm is difference for each option
+ 	- specifically Heston
+
+Heston
+ - Rannacher smoothing seems to have resolved
+ 	the rough edges near ymax
+ - cond sensitive to non-uniform grid
+ - non-uniform grid in y
+ 	- spike in uyy plot near x=K and y=0
+ - together with non-uniform grid in x
+ 	- causes oscillation for OS at y=ymax
+ 	- over compensation
+ - uxx plot takes questionalbe complex shape
+ - adaptive time makes even more unstable
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday July 7
+
+Test on different Smax and ymax, and other parameters
+Compution time
+ - const coefs/dirichlet BC
+ - cond/norm if statements
+
+Margrabe/Spread Call
+ - bug in Margrabe
+ - remove Dirichlet BC
+
+Tests
+ - deltas, gammas
+ - adaptive time - element wise
+
+Forsyth paper stochastic vol
+Haentjens Heston paper
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Sunday July 5
+
+Does reducing Smax actually affect error given Neumann BC?
+
+Boundary problem
+ - oscillation between convex up and convex down
+ - uyy term over compensate at each time step
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Saturday July 4
+
+Fixed several Neumann BC bugs
+ - rhs oy vector
+ - PDE 101 not triggered
+ - penalty and splitting now only applied at PDE points
+
+Rough edge remains near strike at y=ymax
+ - seems as if it receives less diffusion in the x-dim
+ - only near the strike
+ - possibly causing discrepancy vs HaHo13 ADI results 
+ 	- HaHo13 had cut off at 150
+
+Added cond and norm to summary
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Friday July 3
+
+Implement Neumann BC for Heston Model
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Thursday July 2
+
+Generalized PDE BC
+ - added one-sided derivatives at BC
+
+Margrabe solution may need additional BC information
+ - could use y*u(x/y,K=1) to find ficticious points
+ - probably not worth investigating
+
+Spread call and put
+ - bump near strike at x=max boundary
+ - possibly similar to Margrabe type error
+  - BC is more complex than Dirichlet and PDE
+ - Error in MATLAB implementation as well
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday June 30
+
+Margrabe
+ - Using European as Dirichlet BC
+ - Compare Euro and American errors
+
+Spread Call
+ - penalty iteration
+
+PDE BC - in the Uxx direction at x=Smax
+
+Neumann Uxy in the corner
+ - 4 Neumann + PDE BC?
+ - Maybe additional Neumann by taking d2g/dxy
+
+Email student/library #
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Sunday June 28
+
+One-sided discretization
+ - correct but lower order
+ - significantly worse magnitude of error in complex shapes
+
+PDE BC Added for all BC types
+ - American Margrabe still have issue at (Smax,Smax)
+
+Operator splitting formula
+ - no difference in computation results
+ - norm of difference in uj1 is ~ 1e-25
+
+Implementing Heston Model
+ - PDEno=101, Rbno=[30 31], BCno=10
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday June 23
+
+Added PDE type BC to some American options
+ - only added at x=0 and y=0 boundaries except (0,0)
+ - still requires dirichlet type BC
+ - does not account for spread type options
+
+One-sided discretization
+ - order of error for smooth grid
+ - effect of first order approx
+
+Condition number with infinity norm
+ - one for each step size
+ - test rate of increase for larger grids
+
+Norm of inverses
+
+ADI Paper Operator Splitting
+ - equation 15,21
+ - test the difference
+ - convergence to different values
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+check boundary conditions
+
+adaptive time grids
+ - compare
+
+Neumann BC/PDE
+ - BVPs first
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday June 16, 2015
+
+Adaptive Time steps
+ - improved computation costs, but not error
+
+Consider adding tolerance to penalty
+
+PDE Boundary Conditions
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Thursday June 10, 2015
+
+Added dividends to American options
+ - confirmed prices on max calls
+ 	- although PDE tends to over estimate slightly
+ - max puts using MC paper still inconsistent
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Wedesnday June 9, 2015
+
+Added dividends to European options
+ - PDE and closed form solutions
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday June 8, 2015
+
+Added class summary for displaying information
+ - note fb is ignored for now as definition unclear
+ - possibly look for fb in one direction fixing one axis
+
+Issue when taking derivatives with BC
+ - the points directly on BC is copied over
+ - can only plot/interpolate points within calculated grids
+
+Plots 
+ - no obvious oscillations - although grids are small
+ - gamma behave eratically towards x,y = 0 boundary
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Monday June 8, 2015
+
+Changed implementation of matrices to include BC
+ - BVPs are straight forward
+ - IVPs require resetting the BC at each time step
+ 	- the BC does not need to be approximated
+
+IVP no longer exact at x^2
+ - errors are quite large
+
+Fixed IVP bug
+ - need to reformulate the linear problem
+ - rhs also not handled properly
+ - added b-vector for the BC and invertible Aim
+
+New matrices now fully implemented and correct
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+List of papers
+
+MC American Max Call - Page 62
+http://eprints.maths.ox.ac.uk/218/1/firth.pdf
+
+MC American Max Put - Page 20
+http://www.diva-portal.org/smash/get/diva2:301061/FULLTEXT01.pdf
+
+FEM Average Call
+http://link.springer.com/article/10.1007%2Fs10915-007-9150-z
+
+MC/Tree American Max Call
+http://studenttheses.cbs.dk/bitstream/handle/10417/3635/alberto_barola.pdf?sequence=1
+
+ADI Published Version
+http://www.tandfonline.com/doi/pdf/10.1080/1350486X.2015.1009129
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday June 2
+
+Confirmed that European Margrabe is correct with MATLAB
+American Margrabe/Spread relatively consistent
+Non-uniform grid have better results
+
+More digits in results
+number of steps in penalty
+grid size for x,y
+check values at different points near the strike
+free boundary
+delta/gamma
+check for oscillations in price/greeks
+
+check boundary conditions
+dividend in PDE
+ - exact solutions need dividends as well
+
+adaptive time grids
+ - compare
+
+Neumann BC/PDE
+ - BVPs first
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Monday June 1
+
+added more American calls and puts
+added penalty iteration and operator splitting
+still need results to compare to
+
+derived formulation for Neumann BC
+
+for each MC path
+ - need to simulate 2 random vectors
+ - calculate the actual price
+ - discount to present value at risk-free
+average at the end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Friday May 29
+
+Couldn't find reason for high convergence
+ - (+/-) sign for Uxy affected convergence rates
+ - Increasing magnitude also affected convergence rates
+
+Bug in Margrabe option
+ - EuroRb should be using t as tau
+ - incorrect formula
+
+Need to implement convergence for American types
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday May 26
+
+Check the ADI paper's publication
+ - formula for IT and LCP
+
+Neumann BC
+ - test both ficticious point and one sided
+ - forward for v=0
+ - test assume linearity near Smax for ficticious point
+
+Rainbow European
+ - Stulz
+ - Try discounted BC
+
+Rainbow American
+ - block penalty
+ - operator splitting
+ - convergence with itself
+ - research papers
+ - free boundary
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Monday May 25
+
+Checked more complex functions for IVP
+
+Implementing European Rainbow options problem
+ - NaN in DirechletBC(), fixed by setting to zero
+
+Consider working on Neumann BC, since referenced in paper
+ - check notes from notebook
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Friday May 22
+
+Fixed Ut term being time-dependent
+ - code not supposed to handle coefficients on Ut
+ - instead move coefficients to the other side
+
+Test more cases for time-dep coefs
+Frame code for BVPs - Tests 
+ - or pull an earlier copy of the files
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Thursday May 21
+
+Fixed bug for non-uniform grid at u=1, however not complete
+ - still error for Ux and Uy terms
+ - error found in rhs terms
+
+Only change in exactness
+Uxx+Uyy - x^3
+
+Attempt to add IVP
+ - exact cases are now correct
+ - but observing low convergence rate
+ 	- error in truevd2()
+
+Fixed bug
+ - Ut term stops being exact at t^3
+
+ Solution non-exact for time-dependent coefficients
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Wednesday May 20
+Goals - Test variable coefficients, derive non-unif disc.
+
+Ux, Uy convergence at order 4 instead of 16
+Double check convergence for u(x,y)=sin(x*y)
+
+Uniform grid with non-uniform code produce correct results
+Debugging non-uniform grid for u=1 case
+	error in forming the matrix using spdiags
+	- compare code with previous cfd2.m
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tuesday May 19
+Goals - Test basic cases for uniform grid
+
+Uxx+Uyy - x^4, x^4*y^3
+Ux - x^3, x^3*y^2
+Uy - y^3, x^2*y^3
+Uxy - x^4, x^3*y^2
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Higher Dimensions
+
+Ikonen 2004
+Ikonen 2009 - 2D + Stochastic Vol
+Heston Method
+
+2D PDE
+ - including cross derivatives
+ - variable coef
+ - debug carefully
+ - Dirichlet BC
+
+Kroniger/Tensor Product of Matrices
+ - right hand side of equation
+ - sometimes 1 or 2 (3 for cross derivatives) terms
+
+u = 1, x, x+y, x^2
+pde = laplace, helmholtz, more complex
+convergence
+
+European Rainbow Options - Analytical solutions
+
+Batch mode output
+ - matlab script output
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -61,6 +61,7 @@ for ni = 1:ntimes
     ngridt = nt + 1;
     ht = (bt-at)/nt; htj = ht;
     gridt = at + ht*[0:nt*3]; % initialize larger
+    nitv = zeros(size(gridt));
     tj = gridt(1); tj1 = tj; % for init
     dnorm = dnorm0(Penalty) / 2^(ni-1); % half each time
     % note - adaptive grid changed inside loop
@@ -103,8 +104,9 @@ for ni = 1:ntimes
         rhs = htj*(theta*rhs1 + (1-theta)*rhs0) - b1;
         % Aim\(Aex*uj0 - rhs)
 
-        [uj1,aux,nit,P] = t_step(uj0, rhs, Aim, Aex, ...
+        [uj1,aux,nit,P,f,nitk] = t_step(uj0, rhs, Aim, Aex, ...
                     gridx, gridy, aux, htj, tj1, nit, Im);
+        nitv(j) = nitk;
 
         if (tj1>=T)
             break
@@ -112,6 +114,7 @@ for ni = 1:ntimes
     end
 	nt = j;
     gridt = gridt(1:j+1);
+    nitv = nitv(1:j+1);
 
     Nm.nx = nx+1; % grid points
     Nm.ny = ny+1;
@@ -133,7 +136,10 @@ end
 print(m,Display);
 if (Display)
     plot(m,uj1,Gm);
+    % plot(m,spdiags(P,0),Gm);
+    % plot(m,aux,Gm);
     plot_greeks(m,uj1,Gm,Am);
+    % plot_greeks_csx(m,uj1,Gm,Am,[Gm.gy(2),yp/3,2*yp/3,yp,3*yp/2]);
 end
 % disp(EuroRb(xp,yp,T))
 

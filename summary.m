@@ -151,17 +151,53 @@ classdef summary < handle
 		% plot the surface of greeks
 		% only plot the interior points
 		function plot_greeks(m,uj1,Gm,Am)
-			Adx = kron(Am.A1x,Am.Iy) + Am.Ab;
-			plot_int(m,Adx*uj1,Gm);
+			% Adx = kron(Am.A1x,Am.Iy) + Am.Ab;
+			% plot_int(m,Adx*uj1,Gm);
 
-			Ady = kron(Am.Ix,Am.A1y) + Am.Ab;
-			plot_int(m,Ady*uj1,Gm);
+			% Ady = kron(Am.Ix,Am.A1y) + Am.Ab;
+			% plot_int(m,Ady*uj1,Gm);
 
 			Agx = kron(Am.A2x,Am.Iy) + Am.Ab;
 			plot_int(m,Agx*uj1,Gm);
 
 			Agy = kron(Am.Ix,Am.A2y) + Am.Ab;
 			plot_int(m,Agy*uj1,Gm);
+		end
+
+		% plot the interior cross section in the x-dir
+		% no-interpolation, use closest point of y
+		function plot_csx(m,uj1,Gm,yv)
+			nx = length(Gm.gx); ny = length(Gm.gy);
+			ujm = reshape(uj1,ny,nx);
+
+			figure; hold on;
+
+			Legend=cell(length(yv),1);
+			
+			for i = 1:length(yv)
+				yp = yv(i);
+				[~,yind] = min(abs(Gm.gy-yp));
+				y = Gm.gy(yind);
+
+				plot(Gm.gx(2:nx-1),ujm(2:nx-1,yind));
+				Legend{i} = num2str(y);
+			end
+			legend(Legend);
+			hold off;
+		end
+
+		function plot_greeks_csx(m,uj1,Gm,Am,yv)
+			% Adx = kron(Am.A1x,Am.Iy) + Am.Ab;
+			% plot_csx(m,Adx*uj1,Gm,yp);
+
+			% Ady = kron(Am.Ix,Am.A1y) + Am.Ab;
+			% plot_csx(m,Ady*uj1,Gm,yp);
+
+			Agx = kron(Am.A2x,Am.Iy) + Am.Ab;
+			plot_csx(m,Agx*uj1,Gm,yv);
+
+			Agy = kron(Am.Ix,Am.A2y) + Am.Ab;
+			plot_csx(m,Agy*uj1,Gm,yv);
 		end
 
 	end % end methods
