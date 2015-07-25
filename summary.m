@@ -255,6 +255,34 @@ classdef summary < handle
 				uj1(indu(indy)),'LineWidth',5);
 			hold off;
 		end
+
+		% surface of free boundary
+		function mesh_fb(m,ucomp,Gm)
+			global tol K;
+
+			f = DirechletBC(Gm.gx,Gm.gy,0);
+			mx = length(Gm.gx); my = length(Gm.gy);
+			mt = length(Gm.gt);
+			K_ind = find(Gm.gx>K,1);
+
+			ind = zeros(mx,1);
+			fb = zeros(my,mt);
+
+			for j = 1:mt
+				u = ucomp(:,j);
+				t = reshape(u-f-tol>0,my,mx);
+
+				for i = 1:my
+					ftmp = find(t(i,:),1);
+					if isempty(ftmp); ftmp = K_ind; end;
+					ind(i) = ftmp;
+				end
+				fb(:,j) = Gm.gx(ind);
+			end
+			figure;
+			mesh(Gm.gt,Gm.gy,fb);
+		end
+
 	end % end methods
 end % end class
 

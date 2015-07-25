@@ -19,6 +19,7 @@ Large ~ 1/tol^2
  - oscillations did not improve
 
 Added free boundary
+ - Storing ucomp is costly, consider removing
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -42,7 +42,7 @@ for ni = 1:ntimes
     numeqx = neqx;
     hx = (bx-ax)/nx;
     gridx = ax + hx*[0:nx]; gridxu = gridx;
-    gridx = nugrid(gridxu,ax,bx,Gridxno(Gdno+1),K); %non-uniform spacing
+    gridx = nugrid(gridxu,ax,bx,Gridxno(Gdno+1),K); %non-uniform
 
     ny = nodey(ni); % for specific node counts
     ngridy = ny+1; %ninty(nn) = ny;
@@ -50,7 +50,7 @@ for ni = 1:ntimes
     numeqy = neqy;	% n-1 for D, n for DN and periodic, n+1 for N
     hy = (by-ay)/ny;
     gridy = ay + hy*[0:ny]; gridyu = gridy;
-    gridy = nugrid(gridyu,ay,by,Gridyno(Gdno+1),bet); %non-uniform spacing
+    gridy = nugrid(gridyu,ay,by,Gridyno(Gdno+1),bet); %non-uniform
 
     %%%%%%%%%%%%
     % time dim %
@@ -70,6 +70,12 @@ for ni = 1:ntimes
     uj1 = uj0; % for initialization
     uj00 = uj0;
     aux = zeros(size(uj0));
+
+    % store data, includes IC
+    if StoreU
+        ucomp = zeros(length(uj0),nt*3+1);
+        ucomp(:,1) = uj0;
+    end
 
     [~, coefs00, ~] = rhscfd2(nx, ny, gridx, gridy, ...
                                 0, 0);
@@ -108,13 +114,15 @@ for ni = 1:ntimes
                     gridx, gridy, aux, htj, tj1, nit, Im);
         nitv(j) = nitk;
 
-        if (tj1>=T)
-            break
-        end
+        if StoreU; ucomp(:,j+1) = uj1; end;
+
+        if (tj1>=T); break; end;
     end
 	nt = j;
     gridt = gridt(1:j+1);
     nitv = nitv(1:j+1);
+
+    if StoreU; ucomp = ucomp(:,1:j+1);end;
 
     Nm.nx = nx+1; % grid points
     Nm.ny = ny+1;
@@ -128,9 +136,7 @@ for ni = 1:ntimes
     % storing summary
     update(m,uj1,Am,Nm,Gm,Aim);
 
-    if TrackTime
-        toc
-    end
+    if TrackTime; toc; end;
 end
 
 print(m,Display);
@@ -141,6 +147,8 @@ if (Display)
     plot_greeks(m,uj1,Gm,Am,300,2);
     % plot_greeks_csx(m,uj1,Gm,Am,[Gm.gy(2),yp/3,2*yp/3,yp,3*yp/2]);
     plot_fb(m,uj1,Gm,150,1);
+
+    if StoreU; mesh_fb(m,ucomp,Gm); end;
 end
 % disp(EuroRb(xp,yp,T))
 
