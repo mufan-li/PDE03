@@ -8,6 +8,18 @@ To do
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Saturday July 25
+
+Added Quadratic Penalty
+ - need to guess ujk1 before solving
+ - penalty convergence is poor
+
+Large ~ 1/tol^2
+ - caused more penalty iterations
+ - oscillations did not improve
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Tuesday July 21
 
 Fully implicit stepping still causes oscillation

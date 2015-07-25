@@ -39,6 +39,12 @@ function [uj1,aux1,nit,P,f,nitk] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 	        nit = nit+k-1; % additional iterations
 	        nitk = k;
 
+	    case {4,'Splitting HaHo13'}
+	    	PenaltyName = 'Splitting HaHo13';
+	        vj1 = Aim\(Aex*uj0 - rhs + htj*aux0);
+	        aux1 = max( aux0 - 1/htj*(vj1 - f) ,0);
+	        uj1 = max( vj1-htj*aux0 ,f);
+	    
 	    case {3,'Discrete Penalty'}
 	    	PenaltyName = 'Discrete Penalty';
 	    	tol = 1e-6;
@@ -61,12 +67,6 @@ function [uj1,aux1,nit,P,f,nitk] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 	        uj1 = ujk1;
 	        nit = nit+k-1; % additional iterations
 	        nitk = k;
-
-	    % case {4,'Splitting HaHo13'}
-	    % 	PenaltyName = 'Splitting HaHo13';
-	    %     vj1 = Aim\(Aex*uj0 - rhs + htj*aux0);
-	    %     aux1 = max( aux0 - 1/htj*(vj1 - f) ,0);
-	    %     uj1 = max( vj1-htj*aux0 ,f);
 
 	    case {2,'Operator Splitting'}
 	    	PenaltyName = 'Operator Splitting';

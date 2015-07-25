@@ -31,7 +31,7 @@ UnoList=-1; % zero
 PDEno = 101;
 % RbnoList = [0,10]; % Euro 0:2, Amer 10:19, Heston 30:31
 RbnoList = 31;
-PenaltyList = [3 5];
+PenaltyList = [2:3];
 
 for Rbno = RbnoList
 	for Penalty = PenaltyList
