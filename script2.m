@@ -18,12 +18,12 @@ nodex = 2.^((1:ntimes)+2); nodey = nodex; nodet = nodex;
 T = 1; Sx = 0.2; Sy = Sx; rho = 0.5; Rf = 0.05; K = 100;
 q1 = 0.0; q2 = q1; % dividend
 % heston
-alp = 0.2; bet = 0.5; gam = 0.9;
+alp = 0.2; bet = 0.2; gam = 0.9;
 
 xp = K; yp = bet; % points to evaluate
 Smin = 0; Smax = 14*K; ymin = 0; ymax = 5;
 dnorm0 = [5 1.3 5 5 5]; tol = 1e-6;
-Unift = 1; TrackTime = 1; Display = 0;
+Unift = 1; TrackTime = 1; Display = 1;
 StoreU = 1 * (ntimes<=4);
 
 % European Rainbow

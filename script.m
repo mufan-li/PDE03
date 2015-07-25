@@ -144,7 +144,7 @@ if (Display)
     plot(m,uj1,Gm);
     % plot(m,spdiags(P,0),Gm);
     % plot(m,aux,Gm);
-    plot_greeks(m,uj1,Gm,Am,300,2);
+    plot_greeks(m,uj1,Gm,Am,200,1.5);
     % plot_greeks_csx(m,uj1,Gm,Am,[Gm.gy(2),yp/3,2*yp/3,yp,3*yp/2]);
     plot_fb(m,uj1,Gm,150,1);
 

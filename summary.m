@@ -146,6 +146,8 @@ classdef summary < handle
 				indx = 1:mx; indy = 1:my;
 			end
 			mesh(Gm.gx(indx),Gm.gy(indy),um(indy,indx));
+			xlabel('Asset Price'); ylabel('Volatility');
+			zlabel('Option Price');
 		end
 
 		% plot the interior surface
@@ -164,6 +166,7 @@ classdef summary < handle
 			end
 			figure;
 			mesh(gx(indx),gy(indy),v(indy,indx));
+			xlabel('Asset Price'); ylabel('Volatility');
 		end
 
 		% plot the surface of greeks
@@ -179,15 +182,19 @@ classdef summary < handle
 
 			% Adx = kron(Am.A1x,Am.Iy) + Am.Ab;
 			% plot_int(m,Adx*uj1,Gm,xm,ym);
+			% zlabel('Ux');
 
 			% Ady = kron(Am.Ix,Am.A1y) + Am.Ab;
 			% plot_int(m,Ady*uj1,Gm,xm,ym);
+			% zlabel('Uy');
 
 			Agx = kron(Am.A2x,Am.Iy) + Am.Ab;
 			plot_int(m,Agx*uj1,Gm,xm,ym);
+			zlabel('Uxx');
 
 			Agy = kron(Am.Ix,Am.A2y) + Am.Ab;
 			plot_int(m,Agy*uj1,Gm,xm,ym);
+			zlabel('Uyy');
 		end
 
 		% plot the interior cross section in the x-dir
@@ -254,6 +261,8 @@ classdef summary < handle
 			plot3(Gm.gx(ind(indy)),Gm.gy(indy),...
 				uj1(indu(indy)),'LineWidth',5);
 			hold off;
+			xlabel('Asset Price'); ylabel('Volatility');
+			zlabel('Option Price');
 		end
 
 		% surface of free boundary
@@ -281,6 +290,8 @@ classdef summary < handle
 			end
 			figure;
 			mesh(Gm.gt,Gm.gy,fb);
+			xlabel('Time tau'); ylabel('Volatility');
+			zlabel('Free Boundary');
 		end
 
 	end % end methods
