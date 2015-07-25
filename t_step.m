@@ -1,7 +1,7 @@
 function [uj1,aux1,nit,P,f,nitk] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 					 aux0, htj, tj1, nit, Im)
 
-    global Penalty PenaltyName OptionType;
+    global Penalty PenaltyName OptionType tol;
     m = length(uj0); mx = length(gridx); my = length(gridy);
     f = DirechletBC(gridx,gridy,0);
     aux1 = aux0; % unassigned
@@ -17,7 +17,7 @@ function [uj1,aux1,nit,P,f,nitk] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 	    case {5,'Quadratic Penalty'}
 	    	% Zvan, Forsyth, Vetzal (1998)
 			PenaltyName = 'Quadratic Penalty';
-			tol = 1e-6;
+			% tol = 1e-6;
 	    	ujk0 = uj0;
 	    	P = spdiag((uj0-f)<0)/tol;
 
@@ -44,7 +44,7 @@ function [uj1,aux1,nit,P,f,nitk] = t_step(uj0, rhs, Aim, Aex, gridx, gridy,...
 	        vj1 = Aim\(Aex*uj0 - rhs + htj*aux0);
 	        aux1 = max( aux0 - 1/htj*(vj1 - f) ,0);
 	        uj1 = max( vj1-htj*aux0 ,f);
-	    
+
 	    case {3,'Discrete Penalty'}
 	    	PenaltyName = 'Discrete Penalty';
 	    	tol = 1e-6;

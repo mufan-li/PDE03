@@ -140,6 +140,7 @@ if (Display)
     % plot(m,aux,Gm);
     plot_greeks(m,uj1,Gm,Am);
     % plot_greeks_csx(m,uj1,Gm,Am,[Gm.gy(2),yp/3,2*yp/3,yp,3*yp/2]);
+    plot_fb(m,uj1,Gm,150,1)
 end
 % disp(EuroRb(xp,yp,T))
 

@@ -18,7 +18,7 @@ classdef summary < handle
 				'Delta_y','Change','Ratio',...
 				'Gamma_x','Change','Ratio',...
 				'Gamma_y','Change','Ratio',...
-				'Free_Boundary','Change','Ratio',...
+				'FBnd','Change','Ratio',...
 				'Cond','Ratio',...
 				'NormInv','Ratio'};
 
@@ -46,7 +46,6 @@ classdef summary < handle
 
 		% updates after each grid
 		function update(m,uj1,Am,Nm,Gm,Aim)
-
 			% monotonic time steps
 			gtm = gtmf(Gm.gt);
 
@@ -65,7 +64,9 @@ classdef summary < handle
 			Agy = kron(Am.Ix,Am.A2y) + Am.Ab;
 			gyv = intp(Agy*uj1,Gm);
 
-			fbv = 0;
+			% fbv = 0;
+			f = DirechletBC(Gm.gx,Gm.gy,0);
+			fbv = fbc(uj1,f,Gm);
 
 			if (Nm.ni<=3)
 				condA = cond(full(Aim),Inf);
@@ -127,7 +128,7 @@ classdef summary < handle
 			if Display
 				print_cols(m,9:14); % deltas
 				print_cols(m,15:20); % gammas
-				% print_cols(m,21:23); % fb
+				print_cols(m,21:23); % fb
 				print_cols(m,24:27); % cond,norm
 			end
 		end
@@ -200,6 +201,26 @@ classdef summary < handle
 			plot_csx(m,Agy*uj1,Gm,yv);
 		end
 
+		function plot_fb(m,uj1,Gm,xmax,ymax)
+			global tol;
+			f = DirechletBC(Gm.gx,Gm.gy,0);
+			mx = length(Gm.gx); my = length(Gm.gy);
+			t = reshape(uj1-f-tol>0,my,mx);
+			ind = zeros(mx,1);
+			indx = Gm.gx<xmax; indy = Gm.gy<ymax;
+			for i = 1:my
+				ind(i) = find(t(i,:),1);
+			end
+			figure;
+			% plot(Gm.gx(ind),Gm.gy);
+			hold on;
+			um = reshape(uj1,length(Gm.gy),length(Gm.gx));
+			mesh(Gm.gx(indx),Gm.gy(indy),um(indy,indx));
+			indu = (ind'-1)*my+(1:mx);
+			plot3(Gm.gx(ind(indy)),Gm.gy(indy),...
+				uj1(indu(indy)),'LineWidth',5);
+			hold off;
+		end
 	end % end methods
 end % end class
 
@@ -218,6 +239,31 @@ function [up] = intp(uj1,Gm)
 	hx = gx(ix)-gx(ix-1); hy = gy(iy)-gy(iy-1);
 	dx = 1-abs(gx(ix-1:ix)-x)/hx; dy = 1-abs(gy(iy-1:iy)-y)/hy;
 	up = dy * um * dx';
+end
+
+% interpolation of a vector of u(x)
+function [uv] = intp_x(uj1,Gm)
+	gx = Gm.gx;
+	gy = Gm.gy;
+	y = Gm.y;
+
+	mx = length(gx); my = length(gy);
+	uj1m = reshape(uj1,my,mx);
+	iy = find(gy>y,1);
+
+	um = uj1m(iy-1:iy,:);
+	hy = gy(iy)-gy(iy-1);
+	dy = 1-abs(gy(iy-1:iy)-y)/hy;
+	uv = dy * um;
+end
+
+% find the free boundary
+function fb = fbc(uj1,f,Gm)
+	global tol;
+	uv = intp_x(uj1,Gm);
+	fv = intp_x(f,Gm);
+	ind = find(uv-fv-tol>0,1);
+	fb = Gm.gx(ind);
 end
 
 % return change and ratio as 2 columns
