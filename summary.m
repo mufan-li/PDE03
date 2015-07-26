@@ -128,8 +128,7 @@ classdef summary < handle
 			if Display
 				print_cols(m,9:14); % deltas
 				print_cols(m,15:20); % gammas
-				print_cols(m,21:23); % fb
-				print_cols(m,24:27); % cond,norm
+				print_cols(m,21:27); % fb,cond,norm
 			end
 		end
 

@@ -3,8 +3,25 @@ Notes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 To do
- - keep track of free boundary
  - Margrabe/Spread BC
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Sunday July 26
+
+Added 1D adaptive grid
+ - oscillations were removed by adding implicit steps
+ - oscillations dependent on parameters
+ 	- concentrated grid requires more adjustments
+
+implicit smoothing after adaptation effective
+ - regardless of recalc
+ - not needed after after every adapt
+ - in fact 1 is sufficient towards the end for penalty
+	- adaptive grid still helps
+ - adding implicit steps reduce convergence diff
+
+possible by ADI helps smoothing
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -19,7 +36,7 @@ Large ~ 1/tol^2
  - oscillations did not improve
 
 Added free boundary
- - Storing ucomp is costly, consider removing
+ - only store for ntimes<5
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

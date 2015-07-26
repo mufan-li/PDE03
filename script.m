@@ -42,7 +42,7 @@ for ni = 1:ntimes
     numeqx = neqx;
     hx = (bx-ax)/nx;
     gridx = ax + hx*[0:nx]; gridxu = gridx;
-    gridx = nugrid(gridxu,ax,bx,Gridxno(Gdno+1),K); %non-uniform
+    gridx = nugrid(gridxu,ax,bx,Gridxno(Gdno+1),K*Kconc); %non-uniform
 
     ny = nodey(ni); % for specific node counts
     ngridy = ny+1; %ninty(nn) = ny;
@@ -104,7 +104,7 @@ for ni = 1:ntimes
                                 coefs1,bet);
         Im = Am.Im;
 
-        theta = max(ismember(j,1:3),theta0); % Rannacher Smoothing
+        theta = max(ismember(j,[1:3]),theta0); % Rannacher Smoothing
         Aim = Im - theta*htj*(A1d+A1n) + A1b;
         Aex = Im + (1-theta)*htj*(A0d+A0n);
         rhs = htj*(theta*rhs1 + (1-theta)*rhs0) - b1;

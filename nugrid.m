@@ -7,7 +7,7 @@ function [gridx] = nugrid(gridxu,ax,bx,Gridno,K)
     switch Gridno
         case {31}
             % centered strike
-            a0 = 0.1;
+            a0 = 0.2;
             a = grid21a(gridxu,K,bx,a0);
             gridx = grid21(gridxu,K,bx,a0);
             gridx(1) = 0; % floating point error causing x<0

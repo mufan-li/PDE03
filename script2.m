@@ -9,7 +9,7 @@ global Smin Smax ymax Unift Penalty PenaltyName OptionType tol;
 Editors = matlab.desktop.editor.getAll;
 
 Uno = -1; BCno = 1; PDEno = 101;
-ntimes = 4;
+ntimes = 6;
 Gdno = 0;
 Gridxno = [0 21]; Gridyno = [0 31];
 nodex = 2.^((1:ntimes)+2); nodey = nodex; nodet = nodex;
@@ -31,13 +31,15 @@ UnoList=-1; % zero
 PDEno = 101;
 % RbnoList = [0,10]; % Euro 0:2, Amer 10:19, Heston 30:31
 RbnoList = 31;
-PenaltyList = 2;
+PenaltyList = 2:3;
 
 for Rbno = RbnoList
 	for Penalty = PenaltyList
 		for Gdno = 1
-			for Unift = 0
-				script;
+			for Unift = 0:1
+				for Kconc = (5:10)/10
+					script;
+				end
 			end
 		end
 	end
