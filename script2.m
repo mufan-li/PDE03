@@ -6,8 +6,6 @@ global T Sx Sy rho Rf K q1 q2 xp yp;
 global alp bet gam;
 global Smin Smax ymax Unift Penalty PenaltyName OptionType tol;
 
-Editors = matlab.desktop.editor.getAll;
-
 Uno = -1; BCno = 1; PDEno = 101;
 ntimes = 3;
 Gdno = 0;
