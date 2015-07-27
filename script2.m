@@ -9,18 +9,21 @@ global Smin Smax ymax Unift Penalty PenaltyName OptionType tol;
 Editors = matlab.desktop.editor.getAll;
 
 Uno = -1; BCno = 1; PDEno = 101;
-ntimes = 6;
+ntimes = 3;
 Gdno = 0;
 Gridxno = [0 21]; Gridyno = [0 31];
-nodex = 2.^((1:ntimes)+2); nodey = nodex; nodet = nodex;
+% nodex = 2.^((1:ntimes)+2); nodey = nodex; nodet = nodex;
+nodex = [1 2 3]*100; nodey = nodex/2; nodet = nodex/4;
 
 % init variables
-T = 1; Sx = 0.2; Sy = Sx; rho = 0.5; Rf = 0.05; K = 100;
+% T = 1; Sx = 0.2; Sy = Sx; rho = 0.5; Rf = 0.05; K = 100;
+T = 0.25; Sx = 0.2; Sy = Sx; rho = 0.1; Rf = 0.1; K = 10;
 q1 = 0.0; q2 = q1; % dividend
 % heston
-alp = 0.2; bet = 0.2; gam = 0.9;
+alp = 5; bet = 0.16; gam = 0.9;
 
-xp = K; yp = bet; % points to evaluate
+xp = K; yp = 0.25; % points to evaluate
+xv = 8:12; yv = [0.0625 0.25];
 Smin = 0; Smax = 14*K; ymin = 0; ymax = 5;
 dnorm0 = [5 1.3 5 5 5]; tol = 1e-6;
 Unift = 1; TrackTime = 1; Display = 1;
@@ -37,9 +40,7 @@ for Rbno = RbnoList
 	for Penalty = PenaltyList
 		for Gdno = 1
 			for Unift = 0:1
-				for Kconc = (5:10)/10
-					script;
-				end
+				script;
 			end
 		end
 	end

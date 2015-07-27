@@ -80,6 +80,9 @@ classdef summary < handle
 			m.value(Nm.ni,:) = [Nm.nx,Nm.ny,Nm.nt,Nm.nit,gtm,...
 				uv,0,0,dxv,0,0,dyv,0,0,gxv,0,0,gyv,0,0,...
 				fbv,0,0,condA,0,normA,0];
+
+			% print values at points of interest
+			intp_v(m,uj1,Gm);
 		end
 
 		function print_cols(m,cols)
@@ -273,7 +276,7 @@ classdef summary < handle
 			mt = length(Gm.gt);
 			K_ind = find(Gm.gx>K,1);
 
-			ind = zeros(mx,1);
+			ind = zeros(my,1);
 			fb = zeros(my,mt);
 
 			for j = 1:mt
@@ -291,6 +294,25 @@ classdef summary < handle
 			mesh(Gm.gt,Gm.gy,fb);
 			xlabel('Time tau'); ylabel('Volatility');
 			zlabel('Free Boundary');
+		end
+
+		function intp_v(m,uj1,Gm)
+			xv = Gm.xv; yv = Gm.yv;
+			lx = length(xv); ly = length(yv);
+			uv = zeros(lx,ly);
+			mx = length(Gm.gx);
+			my = length(Gm.gy);
+			mt = length(Gm.gt);
+
+			fprintf('Grid nx=%i,ny=%i,nt=%i \n',mx,my,mt);
+			for j = 1:ly
+				for i = 1:lx
+					Gm.x = xv(i); Gm.y = yv(j);
+					uv(i,j) = intp(uj1,Gm);
+					fprintf('%6.6f \t',uv(i,j));
+				end
+				fprintf('\n');
+			end
 		end
 
 	end % end methods

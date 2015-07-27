@@ -7,6 +7,12 @@ To do
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Monday July 27
+
+Slightly shifting grid concentration did not help convergence
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Sunday July 26
 
 Added 1D adaptive grid

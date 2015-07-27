@@ -42,7 +42,7 @@ for ni = 1:ntimes
     numeqx = neqx;
     hx = (bx-ax)/nx;
     gridx = ax + hx*[0:nx]; gridxu = gridx;
-    gridx = nugrid(gridxu,ax,bx,Gridxno(Gdno+1),K*Kconc); %non-uniform
+    gridx = nugrid(gridxu,ax,bx,Gridxno(Gdno+1),K); %non-uniform
 
     ny = nodey(ni); % for specific node counts
     ngridy = ny+1; %ninty(nn) = ny;
@@ -132,6 +132,7 @@ for ni = 1:ntimes
 
     Gm.gx = gridx; Gm.gy = gridy; Gm.gt = gridt; % grids
     Gm.x = xp; Gm.y = yp; % points to evaluate
+    Gm.xv = xv; Gm.yv = yv;
 
     % storing summary
     update(m,uj1,Am,Nm,Gm,Aim);
@@ -144,9 +145,9 @@ if (Display)
     plot(m,uj1,Gm);
     % plot(m,spdiags(P,0),Gm);
     % plot(m,aux,Gm);
-    plot_greeks(m,uj1,Gm,Am,200,1.5);
+    plot_greeks(m,uj1,Gm,Am,2*K,1.5);
     % plot_greeks_csx(m,uj1,Gm,Am,[Gm.gy(2),yp/3,2*yp/3,yp,3*yp/2]);
-    plot_fb(m,uj1,Gm,150,1);
+    plot_fb(m,uj1,Gm,1.5*K,1);
 
     if StoreU; mesh_fb(m,ucomp,Gm); end;
 end
