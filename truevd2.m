@@ -1,9 +1,11 @@
 % function [t1,t2,t3,t4,t5,t6,t7] = truevd2(x, y, t)
 % t1-7 are u,ux,uxx,uy,uyy,uxy,ut respectively
-function [t1,t2,t3,t4,t5,t6,t7] = truevd2(x, y, t)
+function [t1,t2,t3,t4,t5,t6,t7] = truevd2(x, y, t, opt_pde)
 
-global Uno Uname;
+% global Uno Uname;
 % global etaA etaB etaC nu mu R eee;
+Uno = opt_pde.Uno;
+% Uname = opt_pde.Uname;
 
 % note only take/return 1d vectors
 s = max(size(x),max(size(y),size(t)));

@@ -1,14 +1,26 @@
-% function [rhs, coefu, coefux, coefuxx, coefuxxx, coefuxxxx, rhsd] = pde1(x)
+% function [rhs, coefu, coefux, coefuxx, coefuxxx, coefuxxxx, rhsd] 
+% 		= pde1(x)
 %
 % returns the values of the PDE coefficient functions and right side
 
 function [rhs, coefu, coefux, coefuxx, coefuy, ...
-			coefuyy, coefuxy, coefut] = pde2(x, y, t)
+			coefuyy, coefuxy, coefut] = pde2(x, y, t, opt_pde, opt_var)
 
-global PDEno PDEname Uno Uname;
-global T Sx Sy rho Rf K q1 q2 Smin Smax;
-global alp bet gam
+% global PDEno PDEname Uno Uname;
+% global T Sx Sy rho Rf K q1 q2 Smin Smax;
+% global alp bet gam
 % global etaA etaB etaC nu mu R eee;
+
+PDEno = opt_pde.PDEno;
+% Options
+T = opt_var.T;
+Sx = opt_var.sigmax; Sy = opt_var.sigmay;
+rho = opt_var.rho; Rf = opt_var.Rf;
+q1 = opt_var.q1; q2 = opt_var.q2;
+% Heston
+alp = opt_var.alpha; bet = opt_var.beta; 
+gam = opt_var.gamma;
+
 
 % note only take/return 1d vectors
 s = max(size(x),max(size(y),size(t)));
@@ -281,7 +293,7 @@ coefut    = o;
 %if x > 0.5, coefu = -2;, end;
 end
 
-[t1,t2,t3,t4,t5,t6,t7] = truevd2(x, y, t);
+[t1,t2,t3,t4,t5,t6,t7] = truevd2(x, y, t, opt_pde);
 
 if nargout < 5, coefuxxx = 0; coefuxxxx = 0; end
 rhs = (coefu.*t1 + coefux.*t2 + coefuxx.*t3 ...

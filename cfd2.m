@@ -1,9 +1,17 @@
-% function [A, A2, A1, A0, A1b, A1f] = cfd2(n, gridx, coefs);
+% function [A,Ad,Ab,An,Am] = cfd2(coefs, pgrid, opt_pde, opt_var)
 
-function [A,Ad,Ab,An,Am] = cfd2(nx, ny, gridx, gridy, coefs, bet)
+function [A,Ad,Ab,An,Am] = cfd2(coefs, pgrid, opt_pde, opt_var)
+    % cfd2(nx, ny, gridx, gridy, coefs, bet)
 
 % Evaluating Boundary Conditions
-global BCno;
+% global BCno;
+
+nx = pgrid.nx;
+ny = pgrid.ny;
+gridx = pgrid.gridx;
+gridy = pgrid.gridy;
+BCno = opt_pde.BCno;
+bet = opt_var.beta;
 
 m = (nx+1) * (ny+1);
 Ixc = speye(nx+1); Ix = Ixc; Ix(1,1) = 0; Ix(nx+1,nx+1) = 0;
@@ -44,7 +52,8 @@ A2y = A2fb(A2y,hy,ny);
 A1y = spdiags([t0(-hy1./hy0./(hy0+hy1)), ...
         b0((hy1-hy0)./hy0./hy1), ...
         h0(hy0./hy1./(hy0+hy1))], [-1 0 1],ny+1,ny+1);
-A1y = A1yconv(A1y,gridy,hy,bet); % Heston
+% one-sided convection
+A1y = A1yconv(A1y,gridy,hy,bet,opt_pde); % Heston
 A1y = A1fb(A1y,hy,ny);
 
 % Neumann matrices
@@ -191,8 +200,9 @@ function A1 = A1fb(A1,h,n)
 end
 
 % one-sided convection for Heston
-function A1yc = A1yconv(A1y,gridy,hy,bet)
-    global PDEno;
+function A1yc = A1yconv(A1y,gridy,hy,bet,opt_pde)
+    % global PDEno;
+    PDEno = opt_pde.PDEno;
     switch PDEno
     case {101}
         my = length(gridy);

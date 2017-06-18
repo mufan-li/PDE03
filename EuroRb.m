@@ -1,12 +1,27 @@
 % function [t1] = EuroRb(x, y, t);
 % - returns value of the European Rainbown options
-function [t1] = EuroRb(x, y, t);
-global Rbno RbName T Sx Sy rho Rf K q1 q2 Smin Smax;
+function [t1,opt] = EuroRb(x, y, t, opt);
+% global Rbno RbName T Sx Sy rho Rf K q1 q2 Smin Smax;
 
-switch Rbno
+% opt.pde.Uno = -1;
+% opt.pde.BCno = 1;
+% opt.pde.PDEno = 101;
+% % IC/BC choices, Euro 0:2, Amer 10:19, Heston 30:31
+% opt.pde.Rbno = 31;
+% % will be reassigned in DirichletBC.m
+% opt.pde.Amer = true;
+% opt.pde.RbName = 'Heston American Put';
+
+T = opt.var.T;
+Sx = opt.var.sigmax; Sy = opt.var.sigmay;
+rho = opt.var.rho;
+Rf = opt.var.Rf;
+q1 = opt.var.q1; q2 = opt.var.q2;
+
+switch opt.pde.Rbno
 	case {2}
 		% Max Call
-		RbName = 'European Max Call';
+		opt.pde.RbName = 'European Max Call';
 		s = sqrt(Sx^2 + Sy^2 - 2*rho * Sx * Sy);
 
 		d12p = ( log(x./y) + (q2 - q1 + 1/2*s^2).*(t) ) ...
@@ -34,7 +49,7 @@ switch Rbno
 			- K * exp(-Rf*t) * (1 - N2cdf(-d1m,-d2m,rho));
 	case {1}
 		% Max Payoff
-		RbName = 'European Max Payoff';
+		opt.pde.RbName = 'European Max Payoff';
 		s = sqrt(Sx^2 + Sy^2 - 2*rho * Sx * Sy);
 		d12p = ( log(x./y) + (q2 - q1 + 1/2*s^2).*(t) ) ...
 				 ./ (s .* sqrt(t));
@@ -51,7 +66,7 @@ switch Rbno
 
 	case {0}
 		% Margrabe
-		RbName = 'European Margrabe';
+		opt.pde.RbName = 'European Margrabe';
 		s = sqrt(Sx^2 + Sy^2 - 2*rho * Sx * Sy);
 		d1 = ( log(x./y) + ( q2-q1 + 1/2*s^2 ).*(t) ) ./ (s .* sqrt(t));
 		d1(isnan(d1)) = 0; % NaN when 0/0 - value is zero
@@ -63,7 +78,7 @@ switch Rbno
 	otherwise
 		% case 0
 		% note when Uno = -1, this returns zero, which is desired
-		t1 = truevd2(x, y, t);
+		t1 = truevd2(x, y, t, opt.pde);
 end
 
 
@@ -81,3 +96,7 @@ function p = N2cdf(x1,x2,rho)
 	p = mvncdf(x,mu,SG);
 	p = p';
 end
+
+
+
+

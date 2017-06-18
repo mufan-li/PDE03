@@ -2,6 +2,63 @@ Notes
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+four week plan - return on June 30
+
+ - moving mesh BVP
+ - time dependent
+ - Black-Scholes PDE
+ 	- MATLAB spread options bug
+ 	- surface of the derivatives
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+June 25, 2016
+
+Consider more general form of DirichletBC
+ - input general mesh shapes instead of grid
+ - NOT REQUIRED - solve in terms of computational grid
+ - problem will be reframed to different PDE
+ - solution of MMPDE will be the mesh
+
+However, will still need to change DirichletBC
+ - input different opt.pde for MMPDE
+alternatively 
+ - input different opt struct to start with
+ - input both opt.pde and opt.var in DirichletBC
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+May 30, 2016
+
+want to modularize PDE solver for reuse
+ - once to solve physical PDE
+ - once more to solve MMPDE
+created grid class for handling grid related values and methods
+
+use BVP problems from Kit-Sun Ng thesis
+ - can shift by time
+ - can expand/contract the ring
+
+consider also 1D American put
+ - look for concentration near free boundary
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+May 28, 2016
+
+Use the following code for 2D interpolation (fairly fast)
+
+% mx = length(gridx); my = length(gridy);
+% um = reshape(uj1,my,mx);
+% [X,Y] = meshgrid(Gm.gx, Gm.gy);
+
+% X2 = X + randn(mx);
+% Y2 = Y + randn(mx)/10;
+
+% vq = griddata(X, Y, um, X2, Y2);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 To do
  - Margrabe/Spread BC
 

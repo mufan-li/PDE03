@@ -1,153 +1,79 @@
 % New Script file
 
-% consider changing script.m and script2.m to functions
-% to including helper functions within the same file
+m = summary(opt.grid.ntimes); % summary class
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Variables init outside of script.m %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Uno
-% BCno
-% PDEno
-% ntimes
-% nodex
-% nodey
-% nodet
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Functions need changes %
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-BC = 'DirechletBC';
-Uname = '';
-ax = Smin; bx = Smax;
-ay = ymin; by = ymax; % y dim
-at = 0; bt = T; % t dim (IVP)
-theta0 = 1/2; % Crank-Nicolson
-errg = zeros(1, ntimes);
-m = summary(ntimes); % summary class
-
-for ni = 1:ntimes
+for ni = 1:opt.grid.ntimes
     tic
-	%%%%%%%%%%%%%%%%%%%
-	% init space vars %
-	%%%%%%%%%%%%%%%%%%%
+	
+    %%%%%%%%%%%%%%%%%%%
+    % init space vars %
+    %%%%%%%%%%%%%%%%%%%
 
-	nn = ni; % modify later for flexible node counts
+    % physical grid
+    % function grid(ni, opt_grid, x_center, y_center, penaltyno)
+    pgrid = grid(ni, opt.grid, opt.var.K, opt.var.beta, opt.pen.no);
 
-	nx = nodex(ni); % for specific node counts
-    ngridx = nx+1; %nintx(nn) = nx;
-    neqx = nx+1; 
-    numeqx = neqx;
-    hx = (bx-ax)/nx;
-    gridx = ax + hx*[0:nx]; gridxu = gridx;
-    gridx = nugrid(gridxu,ax,bx,Gridxno(Gdno+1),K); %non-uniform
+    [psoln] = solution(pgrid, opt.pde, opt.var, opt.sum.StoreU);
+    % copy setting changes
+    opt.pde = psoln.opt_pde; 
 
-    ny = nodey(ni); % for specific node counts
-    ngridy = ny+1; %ninty(nn) = ny;
-    neqy = ny+1; 
-    numeqy = neqy;	% n-1 for D, n for DN and periodic, n+1 for N
-    hy = (by-ay)/ny;
-    gridy = ay + hy*[0:ny]; gridyu = gridy;
-    gridy = nugrid(gridyu,ay,by,Gridyno(Gdno+1),bet); %non-uniform
-
-    %%%%%%%%%%%%
-    % time dim %
-    %%%%%%%%%%%%
-
-    nt = nodet(ni);
-    nit = 0; % total # of iterations
-    ngridt = nt + 1;
-    ht = (bt-at)/nt; htj = ht;
-    gridt = at + ht*[0:nt*3]; % initialize larger
-    nitv = zeros(size(gridt));
-    tj = gridt(1); tj1 = tj; % for init
-    dnorm = dnorm0(Penalty) / 2^(ni-1); % half each time
-    % note - adaptive grid changed inside loop
-
-    uj0 = DirechletBC(gridx,gridy,at); % IC
-    uj1 = uj0; % for initialization
-    uj00 = uj0;
-    aux = zeros(size(uj0));
-
-    % store data, includes IC
-    if StoreU
-        ucomp = zeros(length(uj0),nt*3+1);
-        ucomp(:,1) = uj0;
-    end
-
-    [~, coefs00, ~] = rhscfd2(nx, ny, gridx, gridy, ...
-                                0, 0);
-    % P = spdiag(aux);
     %%%%%%%%%%%%%%%%%%%%%%%
     % Solve linear system %
     %%%%%%%%%%%%%%%%%%%%%%%
 
-    for j = 1:nt*3
-        tj = tj1;
-        [htj, gridt] = nugridt(htj, j, tj, T, uj1, uj0,...
-                                gridt, dnorm, 1);
-        tj1 = tj + htj;
+    for j = 1:pgrid.nt*3
+        
+        pgrid.stepj = j;
+        % adaptive time step
+        nugridt(pgrid, psoln, opt.grid);
 
-        uj0 = uj1; % after adaptive time step
+        % copy after adaptive time step
+        psoln.uj0 = psoln.uj1; 
 
-        % assume time dependent coefficients
-        [rhs0, coefs0, b0] = rhscfd2(nx, ny, gridx, gridy, ...
-                                tj, coefs00);
-        [rhs1, coefs1, b1] = rhscfd2(nx, ny, gridx, gridy, ...
-                                tj1, coefs00);
+        % set all matrix values
+        setup_mat(psoln, pgrid, opt.pde, opt.var);
 
-        [A0,A0d,A0b,A0n] = cfd2(nx, ny, gridx, gridy, ...
-                                coefs0,bet);
-        [A1,A1d,A1b,A1n,Am] = cfd2(nx, ny, gridx, gridy, ...
-                                coefs1,bet);
-        Im = Am.Im;
-
-        theta = max(ismember(j,[1:3]),theta0); % Rannacher Smoothing
-        Aim = Im - theta*htj*(A1d+A1n) + A1b;
-        Aex = Im + (1-theta)*htj*(A0d+A0n);
-        rhs = htj*(theta*rhs1 + (1-theta)*rhs0) - b1;
         % Aim\(Aex*uj0 - rhs)
+        [opt_pen] = solve_mat(psoln, pgrid, opt.pde, opt.pen);
 
-        [uj1,aux,nit,P,f,nitk] = t_step(uj0, rhs, Aim, Aex, ...
-                    gridx, gridy, aux, htj, tj1, nit, Im);
-        nitv(j) = nitk;
+        % store values
+        if opt.sum.StoreU; psoln.ucomp(:,j+1) = psoln.uj1; end;
 
-        if StoreU; ucomp(:,j+1) = uj1; end;
-
-        if (tj1>=T); break; end;
+        % reached terminal time
+        if (pgrid.tj1 >= opt.grid.tmax); break; end;
     end
-	nt = j;
-    gridt = gridt(1:j+1);
-    nitv = nitv(1:j+1);
 
-    if StoreU; ucomp = ucomp(:,1:j+1);end;
+	pgrid.nt = j;
+    pgrid.gridt = pgrid.gridt(1:j+1);
+    pgrid.nitr_gt = pgrid.nitr_gt(1:j+1);
 
-    Nm.nx = nx+1; % grid points
-    Nm.ny = ny+1;
-    Nm.nt = nt; % steps
-    Nm.nit = nit;
-    Nm.ni = ni;
+    if opt.sum.StoreU; psoln.ucomp = psoln.ucomp(:,1:j+1); end;
 
-    Gm.gx = gridx; Gm.gy = gridy; Gm.gt = gridt; % grids
-    Gm.x = xp; Gm.y = yp; % points to evaluate
-    Gm.xv = xv; Gm.yv = yv;
+    % Nm.nx = nx+1; % grid points
+    % Nm.ny = ny+1;
+    % Nm.nt = nt; % steps
+    % Nm.nit = nit;
+    % Nm.ni = ni;
+
+    % Gm.gx = gridx; Gm.gy = gridy; Gm.gt = gridt; % grids
+    % Gm.x = xp; Gm.y = yp; % points to evaluate
+    % Gm.xv = xv; Gm.yv = yv;
 
     % storing summary
-    update(m,uj1,Am,Nm,Gm,Aim);
+    % update(m,uj1,Am,Nm,Gm,Aim);
+    update(m, ni, psoln, pgrid, opt.pen.tol, opt.sum);
 
-    if TrackTime; toc; end;
+    if opt.sum.TrackTime; toc; end;
 end
 
-print(m,Display);
-if (Display)
-    plot(m,uj1,Gm);
+print(m, opt.sum.Display, opt);
+if (opt.sum.Display)
+    plot(m, psoln.uj1, pgrid);
     % plot(m,spdiags(P,0),Gm);
     % plot(m,aux,Gm);
-    plot_greeks(m,uj1,Gm,Am,2*K,1.5);
+    plot_greeks(m,psoln,pgrid,opt.grid,2*K,1.5);
     % plot_greeks_csx(m,uj1,Gm,Am,[Gm.gy(2),yp/3,2*yp/3,yp,3*yp/2]);
-    plot_fb(m,uj1,Gm,1.5*K,1);
+    plot_fb(m,psoln.uj1,pgrid,opt_pen,1.5*K,1);
 
     if StoreU; mesh_fb(m,ucomp,Gm); end;
 end
